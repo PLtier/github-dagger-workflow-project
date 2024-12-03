@@ -48,6 +48,7 @@ def impute_missing_values(x, method="mean"):
 print("Loading training data")
 
 data = pd.read_csv("./artifacts/raw_data.csv")
+""
 
 print("Total rows:", data.count())
 # display(data.head(5))
@@ -303,6 +304,8 @@ import mlflow.pyfunc
 from sklearn.linear_model import LogisticRegression
 import os
 from sklearn.metrics import cohen_kappa_score, f1_score
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import joblib
 
