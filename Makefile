@@ -2,7 +2,7 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-PROJECT_NAME = github-dagger-workflow-project
+PROJECT_NAME = github_dagger_workflow_project
 PYTHON_VERSION = 3.11
 PYTHON_INTERPRETER = python
 
@@ -31,4 +31,4 @@ requirements:
 ## Make Dataset
 .PHONY: data
 data: requirements
-	$(PYTHON_INTERPRETER) github-dagger-workflow-project/dataset.py
+	$(PYTHON_INTERPRETER) github_dagger_workflow_project/dataset.py
