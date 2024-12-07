@@ -18,8 +18,6 @@ func main() {
 	pipCache := client.CacheVolume("pip_cache")
 	container := client.Container().From("python:3.12.2-bookworm").WithMountedCache("/root/.cache/pip", pipCache)
 
-	// print
-	ls(ctx, container)
 	// _, err = python.File("../artifacts/lead_model_lr.pkl").Export(ctx, "model.pkl")
 	container = copyCode(client, container)
 	container = installDeps(container)
@@ -39,8 +37,9 @@ func installDeps(container *dagger.Container) *dagger.Container {
 	return container
 }
 
-func ls(ctx context.Context, container *dagger.Container, message string) {
-	info, err := container.WithExec([]string{"ls", "-la"}).Stdout(ctx)
+func ls(ctx context.Context, container *dagger.Container, dir string, message string) {
+	fmt.Println(message)
+	info, err := container.WithWorkdir(dir).WithExec([]string{"ls", "-la"}).Stdout(ctx)
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
