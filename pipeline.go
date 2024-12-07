@@ -22,7 +22,9 @@ func main() {
 	container = copyCode(client, container)
 	container = installDeps(container)
 	container = pullData(container)
-	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After copying code and installing dependencies")
+	ls(ctx, container, "/pipeline/github_dagger_workflow_project", "After copying code and installing dependencies")
+	container = executeTraining(container)
+	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After training")
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
@@ -46,6 +48,13 @@ func pullData(container *dagger.Container) *dagger.Container {
 	return container
 }
 
+func executeTraining(container *dagger.Container) *dagger.Container {
+	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
+	container = container.WithExec([]string{"python", "full_script.py"})
+	container = container.WithWorkdir("/")
+	return container
+}
+
 func ls(ctx context.Context, container *dagger.Container, dir string, message string) {
 	fmt.Println(message)
 	info, err := container.WithWorkdir(dir).WithExec([]string{"ls", "-la"}).Stdout(ctx)
@@ -54,4 +63,5 @@ func ls(ctx context.Context, container *dagger.Container, dir string, message st
 		panic(err)
 	}
 	fmt.Println(info)
+
 }
