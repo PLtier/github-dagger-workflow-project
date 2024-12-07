@@ -15,8 +15,8 @@ func main() {
 		panic(err)
 	}
 	defer client.Close()
-
-	container := client.Container().From("python:3.12.2-bookworm")
+	pipCache := client.CacheVolume("pip_cache")
+	container := client.Container().From("python:3.12.2-bookworm").WithMountedCache("/root/.cache/pip", pipCache)
 
 	// print
 	ls(ctx, container)
