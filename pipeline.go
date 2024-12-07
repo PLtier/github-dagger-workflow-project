@@ -21,6 +21,8 @@ func main() {
 	// _, err = python.File("../artifacts/lead_model_lr.pkl").Export(ctx, "model.pkl")
 	container = copyCode(client, container)
 	container = installDeps(container)
+	container = pullData(container)
+	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After copying code and installing dependencies")
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
@@ -34,6 +36,13 @@ func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Contai
 
 func installDeps(container *dagger.Container) *dagger.Container {
 	container = container.WithExec([]string{"pip", "install", "-r", "pipeline/requirements.txt"})
+	return container
+}
+
+func pullData(container *dagger.Container) *dagger.Container {
+	container = container.WithWorkdir("/pipeline")
+	container = container.WithExec([]string{"dvc", "update", "github_dagger_workflow_project/artifacts/raw_data.csv.dvc"})
+	container = container.WithWorkdir("/")
 	return container
 }
 
