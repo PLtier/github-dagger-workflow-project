@@ -1,3 +1,7 @@
+import pandas as pd
+import time
+from mlflow.tracking import MlflowClient
+
 def describe_numeric_col(x):
     """
     Parameters:
@@ -24,8 +28,16 @@ def impute_missing_values(x, method="mean"):
     return x
 
 
-def wait_for_deployment(model_name, model_version, stage='Staging'):
+def create_dummy_cols(df, col):
+    df_dummies = pd.get_dummies(df[col], prefix=col, drop_first=True)
+    new_df = pd.concat([df, df_dummies], axis=1)
+    new_df = new_df.drop(col, axis=1)
+    return new_df
+
+
+def wait_for_deployment(model_name, model_version, client, stage='Staging'):
     status = False
+
     while not status:
         model_version_details = dict(
             client.get_model_version(name=model_name,version=model_version)
