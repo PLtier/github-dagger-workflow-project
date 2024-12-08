@@ -1,6 +1,6 @@
 import pandas as pd
 import time
-from mlflow.tracking import MlflowClient
+import mlflow
 
 def describe_numeric_col(x):
     """
@@ -33,6 +33,14 @@ def create_dummy_cols(df, col):
     new_df = pd.concat([df, df_dummies], axis=1)
     new_df = new_df.drop(col, axis=1)
     return new_df
+
+
+class lr_wrapper(mlflow.pyfunc.PythonModel):
+    def __init__(self, model):
+        self.model = model
+    
+    def predict(self, context, model_input):
+        return self.model.predict_proba(model_input)[:, 1]
 
 
 def wait_for_deployment(model_name, model_version, client, stage='Staging'):
