@@ -1,12 +1,15 @@
-import utils
+import datetime
+import joblib
+import json
+import numpy as np
 import os
 import pandas as pd
 import warnings
-import datetime
-import json
-import numpy as np
+
 from sklearn.preprocessing import MinMaxScaler
-import joblib
+
+import utils
+
 
 # Define min and max date
 max_date = "2024-01-31"
