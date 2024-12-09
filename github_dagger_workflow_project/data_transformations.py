@@ -65,9 +65,6 @@ data = data.dropna(axis=0, subset=["lead_id"])
 data = data[data.source == "signup"]
 result=data.lead_indicator.value_counts(normalize = True)
 
-for val, n in zip(result.index, result):
-    print(val, ": ", n)
-
 vars = [
     "lead_id", "lead_indicator", "customer_group", "onboarding", "source", "customer_code"
 ]
