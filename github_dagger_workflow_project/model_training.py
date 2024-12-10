@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import shutil
 
 import joblib
 import mlflow
@@ -56,33 +57,50 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, test_size=0.15, stratify=y
 )
 
-# Defining XGBoost model
-model = XGBRFClassifier(random_state=42)
-params = {
-    "learning_rate": uniform(1e-2, 3e-1),
-    "min_split_loss": uniform(0, 10),
-    "max_depth": randint(3, 10),
-    "subsample": uniform(0, 1),
-    "objective": ["reg:squarederror", "binary:logistic", "reg:logistic"],
-    "eval_metric": ["aucpr", "error"]
-}
 
-model_grid = RandomizedSearchCV(model, param_distributions=params, n_jobs=-1, verbose=3, n_iter=10, cv=10)
 
-# Fitting and testing XGBoost model
-model_grid.fit(X_train, y_train)
+mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
+experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
 
-y_pred_train = model_grid.predict(X_train)
-y_pred_test = model_grid.predict(X_test)
+with mlflow.start_run(experiment_id=experiment_id) as run:
+    # Defining XGBoost model
+    model = XGBRFClassifier(random_state=42)
+    xgboost_model_path = "./artifacts/lead_model_xgboost.pkl"
+    params = {
+        "learning_rate": uniform(1e-2, 3e-1),
+        "min_split_loss": uniform(0, 10),
+        "max_depth": randint(3, 10),
+        "subsample": uniform(0, 1),
+        "objective": ["reg:squarederror", "binary:logistic", "reg:logistic"],
+        "eval_metric": ["aucpr", "error"]
+        }
+    model_grid = RandomizedSearchCV(model, param_distributions=params, n_jobs=-1, verbose=3, n_iter=10, cv=10)
+
+    model_grid.fit(X_train, y_train)
+
+
+    y_pred_train = model_grid.predict(X_train)
+    y_pred_test = model_grid.predict(X_test)
+
+    xgboost_model = model_grid.best_estimator_
+
+    # log artifacts
+    mlflow.log_metric('f1_score', f1_score(y_test, y_pred_test))
+    mlflow.log_artifacts("artifacts", artifact_path="model")
+    mlflow.log_param("data_version", "00000")
+    mlflow.log_param("model_type", "XGBoost")
+    
+    # store model for model interpretability
+    joblib.dump(value=xgboost_model, filename=xgboost_model_path)
+        
+    # Custom python model for predicting probability 
+    mlflow.pyfunc.log_model('model', python_model=utils.lr_wrapper(xgboost_model))
 
 xgboost_model = model_grid.best_estimator_
 xgboost_model_path = "./artifacts/lead_model_xgboost.json"
 xgboost_model.save_model(xgboost_model_path)
 
-model_results = {
-    xgboost_model_path: classification_report(y_train, y_pred_train, output_dict=True)
-}
-
+model_results = {xgboost_model_path: classification_report(y_train, y_pred_train, output_dict=True)}
 # mlflow logistic regression experiments
 mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
 experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
@@ -108,12 +126,13 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     mlflow.log_metric('f1_score', f1_score(y_test, y_pred_test))
     mlflow.log_artifacts("artifacts", artifact_path="model")
     mlflow.log_param("data_version", "00000")
+    mlflow.log_param("model_type", "LogisticRegression")
     
     # store model for model interpretability
-    joblib.dump(value=model, filename=lr_model_path)
+    joblib.dump(value=best_model, filename=lr_model_path)
         
     # Custom python model for predicting probability 
-    mlflow.pyfunc.log_model('model', python_model=utils.lr_wrapper(model))
+    mlflow.pyfunc.log_model('model', python_model=utils.lr_wrapper(best_model))
 
 # Testing model and storing the columns and model results
 model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
@@ -185,3 +204,18 @@ if run_id is not None:
     model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
     utils.wait_until_ready(model_details.name, model_details.version)
     model_details = dict(model_details)
+
+best_model_type = experiment_best["params.model_type"]
+
+if best_model_type == "XGBoost":
+    best_model_artifact = "lead_model_xgboost.pkl"
+elif best_model_type == "LogisticRegression":
+    best_model_artifact = "lead_model_lr.pkl"
+    
+
+original_file_path = f"./artifacts/{best_model_artifact}"
+new_file_path = "./artifacts/best_model.pkl"
+
+shutil.copyfile(original_file_path, new_file_path)
+
+
