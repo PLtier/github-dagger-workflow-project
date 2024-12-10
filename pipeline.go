@@ -27,6 +27,7 @@ func main() {
 	container = executeTraining(container)
 	container = executeDeployment(container)
 	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After training")
+	ls(ctx, container, "/", "After training")
 	container = retrieveModel(ctx, container)
 }
 
