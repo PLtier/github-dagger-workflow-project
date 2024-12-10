@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import shutil
 
 import joblib
 import mlflow
@@ -125,6 +126,7 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     mlflow.log_metric('f1_score', f1_score(y_test, y_pred_test))
     mlflow.log_artifacts("artifacts", artifact_path="model")
     mlflow.log_param("data_version", "00000")
+    mlflow.log_param("model_type", "LogisticRegression")
     
     # store model for model interpretability
     joblib.dump(value=best_model, filename=lr_model_path)
@@ -202,3 +204,18 @@ if run_id is not None:
     model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
     utils.wait_until_ready(model_details.name, model_details.version)
     model_details = dict(model_details)
+
+best_model_type = experiment_best["params.model_type"]
+
+if best_model_type == "XGBoost":
+    best_model_artifact = "lead_model_xgboost.pkl"
+elif best_model_type == "LogisticRegression":
+    best_model_artifact = "lead_model_lr.pkl"
+    
+
+original_file_path = f"./artifacts/{best_model_artifact}"
+new_file_path = "./artifacts/best_model.pkl"
+
+shutil.copyfile(original_file_path, new_file_path)
+
+
