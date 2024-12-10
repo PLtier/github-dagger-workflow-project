@@ -3,7 +3,7 @@ run-name: Testing Model 🤘
 on:
   pull_request:
     branches:
-      - artificial-main
+      - main
     paths:
       - '**.py'
   workflow_dispatch:

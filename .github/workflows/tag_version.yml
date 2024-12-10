@@ -3,7 +3,7 @@ run-name: tag version 🏷️
 on:
   push:
     branches:
-      - artificial-main
+      - main
     paths:
       - 'version.txt'
 jobs:
