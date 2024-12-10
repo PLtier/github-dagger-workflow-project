@@ -1,0 +1,30 @@
+name: Test Model on main PR
+run-name: Testing Model 🤘
+on:
+  pull_request:
+    branches:
+      - artificial-main
+    paths:
+      - '**.py'
+jobs:
+  training:
+    name: Train Model
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.3
+          cache: false
+      - name: Run container
+        uses: dagger/dagger-for-github@v6
+        with:
+          verb: run
+          args: go run pipeline.go
+          version: "0.14.0"
+  
+        
