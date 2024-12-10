@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
     
 jobs:
-  training:
-    name: Train Model
+  train_and_test:
+    name: Train and Test Model
     runs-on: ubuntu-latest
 
     steps:
@@ -22,11 +22,20 @@ jobs:
         with:
           go-version: 1.23.3
           cache: false
-      - name: Run container
+
+      - name: Train Model
         uses: dagger/dagger-for-github@v6
         with:
           verb: run
           args: go run pipeline.go
           version: "0.14.0"
-  
-        
+
+      - name: Upload Model Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: model
+          path: model.pkl
+
+      - name: Run Model Inference Test Action
+        uses: lasselundstenjensen/itu-sdse-project-model-validator@main
+          
