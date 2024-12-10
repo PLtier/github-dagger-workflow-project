@@ -6,6 +6,8 @@ on:
       - artificial-main
     paths:
       - '**.py'
+  workflow_dispatch:
+    
 jobs:
   training:
     name: Train Model
