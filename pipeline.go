@@ -71,12 +71,11 @@ func executeDeployment(container *dagger.Container) *dagger.Container {
 }
 
 func retrieveModel(ctx context.Context, container *dagger.Container) {
-	info, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl").Export(ctx, "model.pkl")
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "model.pkl")
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
 	}
-	fmt.Println(info)
 }
 
 func ls(ctx context.Context, container *dagger.Container, dir string, message string) {
