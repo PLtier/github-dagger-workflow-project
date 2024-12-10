@@ -27,7 +27,7 @@ func main() {
 	container = executeTraining(container)
 	container = executeDeployment(container)
 	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After training")
-	retrieveModel(ctx, container)
+	container = retrieveModel(ctx, container)
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
@@ -72,13 +72,14 @@ func executeDeployment(container *dagger.Container) *dagger.Container {
 	return container
 }
 
-func retrieveModel(ctx context.Context, container *dagger.Container) {
+func retrieveModel(ctx context.Context, container *dagger.Container) *dagger.Container {
 	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl").Export(ctx, "model.pkl")
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
 	} else {
 		fmt.Println("Model retrieved successfully")
+		return container
 	}
 }
 
