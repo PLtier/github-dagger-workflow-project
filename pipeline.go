@@ -22,11 +22,9 @@ func main() {
 	container = copyCode(client, container)
 	container = installDeps(container)
 	container = pullData(container)
-	ls(ctx, container, "/pipeline/github_dagger_workflow_project", "After copying code and installing dependencies")
 	container = executeTransformations(container)
 	container = executeTraining(container)
 	container = executeDeployment(container)
-	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After training")
 	retrieveModel(ctx, container)
 }
 
