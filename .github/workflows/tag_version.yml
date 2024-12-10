@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - artificial-main
+    paths:
+      - 'version.txt'
 jobs:
   tag-version:
     runs-on: ubuntu-latest
