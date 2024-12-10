@@ -16,14 +16,16 @@ func main() {
 	}
 	defer client.Close()
 	pipCache := client.CacheVolume("pip_cache")
-	container := client.Container().From("python:3.12.2-bookworm").WithMountedCache("/root/.cache/pip", pipCache)
+	container := client.Container().From("python:3.11.9-bookworm").WithMountedCache("/root/.cache/pip", pipCache)
 
 	// _, err = python.File("../artifacts/lead_model_lr.pkl").Export(ctx, "model.pkl")
 	container = copyCode(client, container)
 	container = installDeps(container)
 	container = pullData(container)
 	ls(ctx, container, "/pipeline/github_dagger_workflow_project", "After copying code and installing dependencies")
+	container = executeTransformations(container)
 	container = executeTraining(container)
+	container = executeDeployment(container)
 	ls(ctx, container, "/pipeline/github_dagger_workflow_project/artifacts", "After training")
 	retrieveModel(ctx, container)
 }
@@ -49,9 +51,23 @@ func pullData(container *dagger.Container) *dagger.Container {
 	return container
 }
 
+func executeTransformations(container *dagger.Container) *dagger.Container {
+	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
+	container = container.WithExec([]string{"python", "data_transformations.py"})
+	container = container.WithWorkdir("/")
+	return container
+}
+
 func executeTraining(container *dagger.Container) *dagger.Container {
 	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
-	container = container.WithExec([]string{"python", "full_script.py"})
+	container = container.WithExec([]string{"python", "model_training.py"})
+	container = container.WithWorkdir("/")
+	return container
+}
+
+func executeDeployment(container *dagger.Container) *dagger.Container {
+	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
+	container = container.WithExec([]string{"python", "model_deployment.py"})
 	container = container.WithWorkdir("/")
 	return container
 }
