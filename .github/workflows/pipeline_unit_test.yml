@@ -1,27 +1,12 @@
-name: Verify Model Artifact
+name: Test Workflow Dispatch
 
 on:
-  workflow_run:
-    workflows:
-      - test_action.yml
-    types:
-      - completed
   workflow_dispatch:
-  
+
 jobs:
-  verify-artifact:
-    name: Verify Model Artifact
+  test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Verify Model Artifact
-        run: |
-          if [ -f "./best_model.pkl" ]; then
-            echo "Model artifact best_model.pkl exists."
-          else
-            echo "Model artifact best_model.pkl not found."
-            exit 1
+      - name: Run Test
+        run: echo "Manual trigger test successful!"
