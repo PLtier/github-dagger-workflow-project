@@ -6,6 +6,8 @@ on:
       - test_action.yml
     types:
       - completed
+  workflow_dispatch:
+  
 jobs:
   verify-artifact:
     name: Verify Model Artifact
