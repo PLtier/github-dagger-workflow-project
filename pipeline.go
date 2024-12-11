@@ -24,6 +24,7 @@ func main() {
 	container = pullData(container)
 	container = executeTransformations(container)
 	container = executeTraining(container)
+	container = executeSelection(container)
 	container = executeDeployment(container)
 	retrieveModel(ctx, container)
 }
@@ -59,6 +60,13 @@ func executeTransformations(container *dagger.Container) *dagger.Container {
 func executeTraining(container *dagger.Container) *dagger.Container {
 	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
 	container = container.WithExec([]string{"python", "model_training.py"})
+	container = container.WithWorkdir("/")
+	return container
+}
+
+func executeSelection(container *dagger.Container) *dagger.Container {
+	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
+	container = container.WithExec([]string{"python", "model_selection.py"})
 	container = container.WithWorkdir("/")
 	return container
 }
