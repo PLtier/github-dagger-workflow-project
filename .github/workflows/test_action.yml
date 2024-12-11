@@ -35,6 +35,13 @@ jobs:
         with:
           name: model
           path: model.pkl
+      
+      - name: tree
+        uses: jaywcjlove/github-action-folder-tree@main
+        id: tree
+        with:
+          path: ./
+          depts: 3
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
