@@ -15,7 +15,7 @@ jobs:
       - name: Download Artifact from "Test Model on main PR"
         uses: actions/download-artifact@v3
         with:
-          name: model  # Must match the name used in the first workflow
+          name: model 
           path: ./artifacts
 
       - name: Verify Artifact Exists
