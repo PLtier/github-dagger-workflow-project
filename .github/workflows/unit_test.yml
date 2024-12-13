@@ -21,4 +21,4 @@ jobs:
         with:
           workflow: test_action.yml
           workflow_conclusion: ""
-          name: model.pkl
+          name: model
