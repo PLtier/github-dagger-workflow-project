@@ -21,3 +21,4 @@ jobs:
         with:
           workflow: test_action.yml
           workflow_conclusion: success
+          name: model.pkl
