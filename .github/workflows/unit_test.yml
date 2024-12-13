@@ -6,23 +6,15 @@ on:
       - Test Model on main PR
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download Artifact from "Test Model on main PR"
-        uses: actions/download-artifact@v3
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
-          name: model 
-          path: ./artifacts
-
-      - name: Verify Artifact Exists
-        run: |
-          if [ ! -f "./artifacts/model.pkl" ]; then
-            echo "Model artifact not found!"
-            exit 1
-          else
-            echo "Model artifact verified."
-          fi
+          workflow: test_action.yml
+          workflow_conclusion: success
