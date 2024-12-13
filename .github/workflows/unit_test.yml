@@ -1,0 +1,21 @@
+name: Test Model Artifact
+
+on:
+  pull_request:
+    branches:
+      - test-main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify Artifact Exists
+        run: |
+          if [ ! -f "./artifacts/model.pkl" ]; then
+            echo "Model artifact not found!"
+            exit 1
+          else
+            echo "Model artifact verified."
+          fi
