@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download Artifact from Previous Workflow
+        uses: actions/download-artifact@v3
+        with:
+          name: model-artifact
+          path: ./artifacts
+
       - name: Verify Artifact Exists
         run: |
           if [ ! -f "./artifacts/model.pkl" ]; then
