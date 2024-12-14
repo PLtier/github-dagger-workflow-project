@@ -5,6 +5,11 @@ on:
   pull_request:
 
 jobs:
+  test_model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: exit 0
   train_and_upload:
     runs-on: ubuntu-latest
     steps:
