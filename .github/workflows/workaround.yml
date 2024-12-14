@@ -1,0 +1,12 @@
+# Workaround for required checks when file patterns don't match.
+
+name: No Op
+on:
+  pull_request:
+
+jobs:
+  test_model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: exit 0
