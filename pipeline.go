@@ -32,6 +32,7 @@ func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Contai
 	container = container.
 		WithDirectory("/pipeline/.dvc", client.Host().Directory(".dvc")).
 		WithDirectory("/pipeline/.git", client.Host().Directory(".git")).
+		WithFile("/pipeline/pyproject.toml", client.Host().File("pyproject.toml")).
 		WithFile("/pipeline/requirements.txt", client.Host().File("pipeline_deps/requirements.txt")).
 		WithDirectory("/pipeline/github_dagger_workflow_project", client.Host().Directory("github_dagger_workflow_project"))
 	return container

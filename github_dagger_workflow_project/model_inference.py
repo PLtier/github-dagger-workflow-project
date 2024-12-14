@@ -1,4 +1,5 @@
-import sklearn
+import sklearn  # noqa: F401
+import xgboost  # noqa: F401
 import pandas as pd
 import joblib
 

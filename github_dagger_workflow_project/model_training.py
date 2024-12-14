@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from xgboost import XGBRFClassifier
 
-import utils
+from github_dagger_workflow_project import utils
 
 
 # Constants used:

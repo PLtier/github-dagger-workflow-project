@@ -8,7 +8,7 @@ import warnings
 
 from sklearn.preprocessing import MinMaxScaler
 
-import utils
+from github_dagger_workflow_project import utils
 
 
 # Define min and max date
@@ -43,7 +43,14 @@ with open("./artifacts/date_limits.json", "w") as f:
     json.dump(date_limits, f)
 
 data = data.drop(
-    ["is_active", "marketing_consent", "first_booking", "existing_customer", "last_seen"], axis=1
+    [
+        "is_active",
+        "marketing_consent",
+        "first_booking",
+        "existing_customer",
+        "last_seen",
+    ],
+    axis=1,
 )
 
 # Removing columns that will be added back after the EDA
@@ -59,7 +66,14 @@ data = data.dropna(axis=0, subset=["lead_id"])
 data = data[data.source == "signup"]
 result = data.lead_indicator.value_counts(normalize=True)
 
-vars = ["lead_id", "lead_indicator", "customer_group", "onboarding", "source", "customer_code"]
+vars = [
+    "lead_id",
+    "lead_indicator",
+    "customer_group",
+    "onboarding",
+    "source",
+    "customer_code",
+]
 
 for col in vars:
     data[col] = data[col].astype("object")

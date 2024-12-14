@@ -1,6 +1,6 @@
 import mlflow
 import pandas as pd
-import utils
+from github_dagger_workflow_project import utils
 from mlflow.tracking.client import MlflowClient
 
 artifact_path = "model"
