@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	if err := RunPipeline(); err != nil {
+	if err := RunPipeline(false); err != nil {
 		fmt.Printf("Pipeline execution failed: %v", err)
 	}
 }
-func RunPipeline() error {
+func RunPipeline(isTesting bool) error {
 	ctx := context.Background()
 	client, err := dagger.Connect(ctx)
 	if err != nil {
@@ -30,10 +30,14 @@ func RunPipeline() error {
 	container = executeTraining(container)
 	container = executeSelection(container)
 	err = retrieveModel(ctx, container)
+	if isTesting {
+		_, err = container.WithExec([]string{"python", "/pipeline/github_dagger_workflow_project/tests/verify_artifacts.py"}).Stderr(ctx)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to run pipeline: %v", err)
 	}
 	return nil
+
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
@@ -52,7 +56,7 @@ func installDeps(container *dagger.Container) *dagger.Container {
 }
 
 func pullData(container *dagger.Container) *dagger.Container {
-	container = container.WithWorkdir("/pipelinel")
+	container = container.WithWorkdir("/pipeline")
 	container = container.WithExec([]string{"dvc", "update", "github_dagger_workflow_project/artifacts/raw_data.csv.dvc"})
 	container = container.WithWorkdir("/")
 	return container
