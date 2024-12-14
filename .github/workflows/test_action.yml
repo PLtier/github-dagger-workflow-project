@@ -36,6 +36,10 @@ jobs:
           name: model
           path: model.pkl
       
+      - name: Unit Test Model Artifact
+        uses: actions/download-artifact@v4
+          name: model
+
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
         id: tree
