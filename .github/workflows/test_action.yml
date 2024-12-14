@@ -35,6 +35,13 @@ jobs:
         with:
           name: model
           path: model.pkl
+
+      - name: tree
+      uses: jaywcjlove/github-action-folder-tree@main
+      id: tree
+      with:
+        path: ./
+        depth: 3
   
   test_model:
     needs: train_and_upload
@@ -46,13 +53,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: model
-
-      - name: tree
-        uses: jaywcjlove/github-action-folder-tree@main
-        id: tree
-        with:
-          path: ./
-          depth: 3
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
