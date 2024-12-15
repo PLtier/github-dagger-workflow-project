@@ -8,11 +8,15 @@ import (
 )
 
 func main() {
+	if err := RunPipeline(false); err != nil {
+		fmt.Printf("Pipeline execution failed: %v", err)
+	}
+}
+func RunPipeline(isTesting bool) error {
 	ctx := context.Background()
 	client, err := dagger.Connect(ctx)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		return fmt.Errorf("failed to connect to Dagger: %v", err)
 	}
 	defer client.Close()
 	pipCache := client.CacheVolume("pip_cache")
@@ -25,7 +29,15 @@ func main() {
 	container = executeTransformations(container)
 	container = executeTraining(container)
 	container = executeSelection(container)
-	retrieveModel(ctx, container)
+	err = retrieveModel(ctx, container)
+	if isTesting {
+		_, err = container.WithExec([]string{"python", "/pipeline/github_dagger_workflow_project/tests/verify_artifacts.py"}).Stderr(ctx)
+	}
+	if err != nil {
+		return fmt.Errorf("failed to run pipeline: %v", err)
+	}
+	return nil
+
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
@@ -71,12 +83,12 @@ func executeSelection(container *dagger.Container) *dagger.Container {
 	return container
 }
 
-func retrieveModel(ctx context.Context, container *dagger.Container) {
+func retrieveModel(ctx context.Context, container *dagger.Container) error {
 	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "model.pkl")
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		return fmt.Errorf("failed to retrieve model: %v", err)
 	}
+	return nil
 }
 
 func ls(ctx context.Context, container *dagger.Container, dir string, message string) {
