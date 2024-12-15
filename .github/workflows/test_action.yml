@@ -4,13 +4,11 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - '**.py'
   workflow_dispatch:
     
 jobs:
-  train_and_test:
-    name: Train and Test Model
+  train_and_upload:
+    name: Train and Upload Model
     runs-on: ubuntu-latest
 
     steps:
@@ -35,13 +33,24 @@ jobs:
         with:
           name: model
           path: model.pkl
-      
+
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
         id: tree
         with:
           path: ./
           depth: 3
+  
+  test_model:
+    needs: train_and_upload
+    name: Unit Test Model Artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Unit Test Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: model
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
