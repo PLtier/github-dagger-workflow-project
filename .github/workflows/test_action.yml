@@ -3,7 +3,7 @@ run-name: Testing Model 🤘
 on:
   pull_request:
     branches:
-      - main
+      - main-test
   workflow_dispatch:
 
 jobs:
@@ -28,11 +28,35 @@ jobs:
           args: go run pipeline.go
           version: "0.14.0"
 
-      - name: Upload Model Artifact
+      - name: Upload Train Data
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: model
+          name: train_data
+          path: train_data_gold.csv
+
+      - name: Upload LR Model Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: lr_model
+          path: lead_model_lr.pkl
+
+      - name: Upload XGBoost Model Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: xgboost_model
+          path: lead_model_xgboost.pkl
+      
+      - name: Upload Best Model Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: best_model
           path: model.pkl
+
+      - name: Upload Best Experiment
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: best_experiment
+          path: best_experiment.pkl
 
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
@@ -47,10 +71,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Unit Test Train Data
+        uses: actions/download-artifact@v4
+        with:
+          name: train_data
+
+      - name: Unit Test LR Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lr_model
+
+      - name: Unit Test XGBoost Model Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xgboost_model
+
       - name: Unit Test Model Artifact
         uses: actions/download-artifact@v4
         with:
-          name: model
+          name: best_model
+
+      - name: Unit Test Best Experiment
+        uses: actions/download-artifact@v4
+        with:
+          name: best_experiment
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
