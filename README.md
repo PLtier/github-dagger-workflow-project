@@ -7,50 +7,53 @@ In this project we were tasked with restructuring a Python monolith using the co
 ## Project Structure
 
 ```
-├── README.md          <- Project description
+├── README.md                         <- Project description and how to run the code
 │
 ├── .dvc
 │
-├── .github/workflows               <- 
-│   ├── tag_version.yml      <- 
-│   └── test_action.yml        <- 
+├── .github/workflows                 <- Github Action workflows
+│   │
+│   ├── tag_version.yml               <- 
+│   │
+│   └── test_action.yml               <- 
 │
-├── pipeline_deps               <- 
-│   └── requirements.txt      <- 
+├── pipeline_deps                     <- 
+│   │
+│   └── requirements.txt              <- Dependencies for the pipeline
 │
-├── CODEOWNERS             <-
+├── CODEOWNERS                        <- Defines codeowners for the repository
 │
-├── go.mod             <-
+├── go.mod                            <- Go file that defines the module and the required dependencies
 │
-├── go.sum             <-
+├── go.sum                            <-
 │
-├── pipeline.go             <-
+├── pipeline.go                       <- Dagger workflow written in Go
 │
-├── pyproject.toml             <-
+├── pyproject.toml                    <-
 │
-├── references         <- 
+├── references                        <- Documentation and extra resources 
 │
-├── requirements.txt   <- 
+├── requirements.txt                  <- Python dependecies need for the project
 │
-└── github_dagger_workflow_project   <- 
+└── github_dagger_workflow_project    <- Source code for the project
     │
-    ├── __init__.py             <- 
+    ├── __init__.py                   <- 
     │
-    ├── 01_data_transformations.py             <- 
+    ├── 01_data_transformations.py    <- Code for data preprocessing and transformation
     │
-    ├── 02_model_training.py               <- 
+    ├── 02_model_training.py          <- Code for training the models
     │
-    ├── 03_model_selection.py              <- 
+    ├── 03_model_selection.py         <- Code for selecting the best perfoming model
     │
-    ├── 04_prod_model.py             <- 
+    ├── 04_prod_model.py              <- Code for comparing new best model and production model
     │
-    ├── 05_model_deployment.py             <- 
+    ├── 05_model_deployment.py        <- Code for deploying model
     │
     ├── artifacts
     │   │
-    │   └── raw_data.csv.dvc            <- 
+    │   └── raw_data.csv.dvc          <- 
     │
-    └── utils.py                <- 
+    └── utils.py                      <- Helper functions
 ```
 
 ---
