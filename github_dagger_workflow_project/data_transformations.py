@@ -8,7 +8,7 @@ import warnings
 
 from sklearn.preprocessing import MinMaxScaler
 
-from github_dagger_workflow_project import utils
+import utils
 
 
 # Define min and max date
@@ -38,9 +38,6 @@ data = data[(data["date_part"] >= min_date) & (data["date_part"] <= max_date)]
 
 min_date = data["date_part"].min()
 max_date = data["date_part"].max()
-date_limits = {"min_date": str(min_date), "max_date": str(max_date)}
-with open("./artifacts/date_limits.json", "w") as f:
-    json.dump(date_limits, f)
 
 data = data.drop(
     [
@@ -85,12 +82,6 @@ cont_vars = cont_vars.apply(
     lambda x: x.clip(lower=(x.mean() - 2 * x.std()), upper=(x.mean() + 2 * x.std()))
 )
 
-outlier_summary = cont_vars.apply(utils.describe_numeric_col).T
-outlier_summary.to_csv("./artifacts/outlier_summary.csv")
-
-cat_missing_impute = cat_vars.mode(numeric_only=False, dropna=True)
-cat_missing_impute.to_csv("./artifacts/cat_missing_impute.csv")
-
 # Continuous variables missing values
 cont_vars = cont_vars.apply(utils.impute_missing_values)
 cont_vars.apply(utils.describe_numeric_col).T
@@ -100,11 +91,8 @@ cat_vars = cat_vars.apply(utils.impute_missing_values)
 cat_vars.apply(lambda x: pd.Series([x.count(), x.isnull().sum()], index=["Count", "Missing"])).T
 
 # Scaling continuous variables
-scaler_path = "./artifacts/scaler.pkl"
 scaler = MinMaxScaler()
 scaler.fit(cont_vars)
-
-joblib.dump(value=scaler, filename=scaler_path)
 
 cont_vars = pd.DataFrame(scaler.transform(cont_vars), columns=cont_vars.columns)
 cont_vars = cont_vars.reset_index(drop=True)
@@ -114,12 +102,7 @@ cat_vars = cat_vars.reset_index(drop=True)
 data = pd.concat([cat_vars, cont_vars], axis=1)
 data_columns = list(data.columns)
 
-with open("./artifacts/columns_drift.json", "w+") as f:
-    json.dump(data_columns, f)
-
 # Storing the final training data
-data.to_csv("./artifacts/training_data.csv", index=False)
-
 data["bin_source"] = data["source"]
 values_list = ["li", "organic", "signup", "fb"]
 data.loc[~data["source"].isin(values_list), "bin_source"] = "Others"
