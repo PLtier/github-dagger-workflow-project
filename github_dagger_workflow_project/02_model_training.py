@@ -7,7 +7,7 @@ import mlflow.pyfunc
 import pandas as pd
 from scipy.stats import uniform, randint
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from xgboost import XGBRFClassifier
 
