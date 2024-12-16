@@ -64,21 +64,21 @@ func pullData(container *dagger.Container) *dagger.Container {
 
 func executeTransformations(container *dagger.Container) *dagger.Container {
 	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
-	container = container.WithExec([]string{"python", "data_transformations.py"})
+	container = container.WithExec([]string{"python", "01_data_transformations.py"})
 	container = container.WithWorkdir("/")
 	return container
 }
 
 func executeTraining(container *dagger.Container) *dagger.Container {
 	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
-	container = container.WithExec([]string{"python", "model_training.py"})
+	container = container.WithExec([]string{"python", "02_model_training.py"})
 	container = container.WithWorkdir("/")
 	return container
 }
 
 func executeSelection(container *dagger.Container) *dagger.Container {
 	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
-	container = container.WithExec([]string{"python", "model_selection.py"})
+	container = container.WithExec([]string{"python", "03_model_selection.py"})
 	container = container.WithWorkdir("/")
 	return container
 }
