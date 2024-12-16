@@ -112,7 +112,7 @@ func retrieveXGBoostModel(ctx context.Context, container *dagger.Container) erro
 }
 
 func retrieveModel(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "best_model.pkl")
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "model.pkl")
 	if err != nil {
 		return fmt.Errorf("failed to retrieve best model: %v", err)
 	}
