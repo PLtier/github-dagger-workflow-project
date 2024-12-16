@@ -1,5 +1,4 @@
 import datetime
-import json
 import os
 
 import joblib
@@ -55,12 +54,11 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, test_size=0.15, stratify=y
 )
 
-
 mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
 experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
 
+# mlflow xgboost experiments
 with mlflow.start_run(experiment_id=experiment_id) as run:
-    # Defining XGBoost model
     model = XGBRFClassifier(random_state=42)
     xgboost_model_path = "./artifacts/lead_model_xgboost.pkl"
     params = {
@@ -123,8 +121,3 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
 
     # Custom python model for predicting probability
     mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(best_model))
-
-# Testing model and storing the columns and model results
-model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
-
-best_model_lr_params = model_grid.best_params_

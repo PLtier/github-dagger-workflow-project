@@ -1,6 +1,4 @@
 import datetime
-import joblib
-import json
 import numpy as np
 import os
 import pandas as pd
@@ -36,9 +34,6 @@ data = pd.read_csv("./artifacts/raw_data.csv")
 data["date_part"] = pd.to_datetime(data["date_part"]).dt.date
 data = data[(data["date_part"] >= min_date) & (data["date_part"] <= max_date)]
 
-min_date = data["date_part"].min()
-max_date = data["date_part"].max()
-
 data = data.drop(
     [
         "is_active",
@@ -61,7 +56,6 @@ data = data.dropna(axis=0, subset=["lead_indicator"])
 data = data.dropna(axis=0, subset=["lead_id"])
 
 data = data[data.source == "signup"]
-result = data.lead_indicator.value_counts(normalize=True)
 
 vars = [
     "lead_id",
@@ -100,7 +94,6 @@ cat_vars = cat_vars.reset_index(drop=True)
 
 # Concatenating the categorical and continuous variables
 data = pd.concat([cat_vars, cont_vars], axis=1)
-data_columns = list(data.columns)
 
 # Storing the final training data
 data["bin_source"] = data["source"]
