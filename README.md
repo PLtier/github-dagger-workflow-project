@@ -2,7 +2,7 @@
 
 This project is part of the Software Development and Software Engineering at ITU. The original project description can be found [here](https://github.com/lasselundstenjensen/itu-sdse-project)
 
-In this project we were tasked with restructuring a Python monolith using the concepts we have learned throughout the course. This project contains a Dagger and Github workflow.
+In this project we were tasked with restructuring a Python monolith using the concepts we have learned throughout the course. This project contains a [Dagger](https://github.com/PLtier/github-dagger-workflow-project/blob/main/pipeline.go) and [Github](https://github.com/PLtier/github-dagger-workflow-project/blob/main/.github/workflows/test_action.yml) workflow.
 
 ## Project Structure
 
@@ -13,10 +13,10 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 ├── .github/workflows               <- 
 │   ├── tag_version.yml      <- 
-│   ├── test_action.yml        <- 
+│   └── test_action.yml        <- 
 │
 ├── pipeline_deps               <- 
-│   ├── requirements.txt      <- 
+│   └── requirements.txt      <- 
 │
 ├── CODEOWNERS             <-
 │
@@ -34,15 +34,17 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 └── github_dagger_workflow_project   <- 
     │
-    ├── data_transformations.py             <- 
+    ├── __init__.py             <- 
     │
-    ├── model_deployment.py               <- 
+    ├── 01_data_transformations.py             <- 
     │
-    ├── model_selection.py              <- 
+    ├── 02_model_training.py               <- 
     │
-    ├── model_training.py             <- 
+    ├── 03_model_selection.py              <- 
     │
-    ├── prod_model.py             <- 
+    ├── 04_prod_model.py             <- 
+    │
+    ├── 05_model_deployment.py             <- 
     │
     ├── artifacts
     │   │
@@ -58,6 +60,6 @@ In this project we were tasked with restructuring a Python monolith using the co
 
 ### Triggering Github Workflow
 
-The workflow can be triggered either by pushing changes or manually.
+The workflow can be triggered either by on pull requests to main or manually.
 
  It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/test_action.yml) by pressing `Run workflow` on the `main` branch
