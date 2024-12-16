@@ -1,5 +1,4 @@
 import datetime
-import json
 import os
 
 import joblib
@@ -8,11 +7,11 @@ import mlflow.pyfunc
 import pandas as pd
 from scipy.stats import uniform, randint
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from xgboost import XGBRFClassifier
 
-from github_dagger_workflow_project import utils
+import utils
 
 
 # Constants used:
@@ -55,12 +54,11 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, test_size=0.15, stratify=y
 )
 
-
 mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
 experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
 
+# mlflow xgboost experiments
 with mlflow.start_run(experiment_id=experiment_id) as run:
-    # Defining XGBoost model
     model = XGBRFClassifier(random_state=42)
     xgboost_model_path = "./artifacts/lead_model_xgboost.pkl"
     params = {
@@ -94,14 +92,7 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     # Custom python model for predicting probability
     mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(xgboost_model))
 
-xgboost_model_path = "./artifacts/lead_model_xgboost.json"
-xgboost_model.save_model(xgboost_model_path)
-
-model_results = {
-    xgboost_model_path: classification_report(y_train, y_pred_train, output_dict=True)
-}
 # mlflow logistic regression experiments
-
 with mlflow.start_run(experiment_id=experiment_id) as run:
     model = LogisticRegression()
     lr_model_path = "./artifacts/lead_model_lr.pkl"
@@ -130,19 +121,3 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
 
     # Custom python model for predicting probability
     mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(best_model))
-
-# Testing model and storing the columns and model results
-model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
-
-best_model_lr_params = model_grid.best_params_
-
-model_results[lr_model_path] = model_classification_report
-
-column_list_path = "./artifacts/columns_list.json"
-with open(column_list_path, "w+") as columns_file:
-    columns = {"column_names": list(X_train.columns)}
-    json.dump(columns, columns_file)
-
-model_results_path = "./artifacts/model_results.json"
-with open(model_results_path, "w+") as results_file:
-    json.dump(model_results, results_file)
