@@ -32,25 +32,25 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         with:
           name: train_data
-          path: /pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv
+          path: train_data.csv
 
       - name: Upload LR Model Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: lr_model
-          path: lead_model_lr.pkl
+          path: lr_model.pkl
 
       - name: Upload XGBoost Model Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: xgboost_model
-          path: lead_model_xgboost.pkl
+          path: xgboost_model.pkl
       
       - name: Upload Best Model Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: best_model
-          path: model.pkl
+          path: best_model.pkl
 
       - name: Upload Best Experiment
         uses: actions/upload-artifact@v4.4.0
