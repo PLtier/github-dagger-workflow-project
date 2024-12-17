@@ -29,7 +29,11 @@ func RunPipeline(isTesting bool) error {
 	container = executeTransformations(container)
 	container = executeTraining(container)
 	container = executeSelection(container)
+	err = retrieveTrainData(ctx, container)
+	err = retrieveLRModel(ctx, container)
+	err = retrieveXGBoostModel(ctx, container)
 	err = retrieveModel(ctx, container)
+	err = retrieveExperiment(ctx, container)
 	if isTesting {
 		_, err = container.WithExec([]string{"python", "/pipeline/github_dagger_workflow_project/tests/verify_artifacts.py"}).Stderr(ctx)
 	}
@@ -83,10 +87,42 @@ func executeSelection(container *dagger.Container) *dagger.Container {
 	return container
 }
 
+func retrieveTrainData(ctx context.Context, container *dagger.Container) error {
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv").Export(ctx, "train_data.csv")
+	if err != nil {
+		return fmt.Errorf("failed to retrieve training data: %v", err)
+	}
+	return nil
+}
+
+func retrieveLRModel(ctx context.Context, container *dagger.Container) error {
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl").Export(ctx, "lr_model.pkl")
+	if err != nil {
+		return fmt.Errorf("failed to retrieve LR model: %v", err)
+	}
+	return nil
+}
+
+func retrieveXGBoostModel(ctx context.Context, container *dagger.Container) error {
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl").Export(ctx, "xgboost_model.pkl")
+	if err != nil {
+		return fmt.Errorf("failed to retrieve XGBoost model: %v", err)
+	}
+	return nil
+}
+
 func retrieveModel(ctx context.Context, container *dagger.Container) error {
 	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "model.pkl")
 	if err != nil {
-		return fmt.Errorf("failed to retrieve model: %v", err)
+		return fmt.Errorf("failed to retrieve best model: %v", err)
+	}
+	return nil
+}
+
+func retrieveExperiment(ctx context.Context, container *dagger.Container) error {
+	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_experiment.pkl").Export(ctx, "best_experiment.pkl")
+	if err != nil {
+		return fmt.Errorf("failed to retrieve best experiment: %v", err)
 	}
 	return nil
 }
