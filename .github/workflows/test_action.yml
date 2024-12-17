@@ -3,7 +3,7 @@ run-name: Testing Model 🤘
 on:
   pull_request:
     branches:
-      - main
+      - main-testings
   workflow_dispatch:
 
 jobs:
