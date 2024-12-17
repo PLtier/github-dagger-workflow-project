@@ -28,11 +28,11 @@ jobs:
           args: go run pipeline.go
           version: "0.14.0"
 
-      - name: Download All Artifacts
-        uses: actions/download-artifact@v4
+      - name: Upload All Artifacts
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: all-artifacts
-          path: downloaded_artifacts/
+          path: artifacts/
 
       # - name: Upload Best Experiment
       #   uses: actions/upload-artifact@v4.4.0
