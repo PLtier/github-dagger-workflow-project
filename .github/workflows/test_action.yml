@@ -3,7 +3,7 @@ run-name: Testing Model 🤘
 on:
   pull_request:
     branches:
-      - main-testing
+      - main
   workflow_dispatch:
 
 jobs:
@@ -33,24 +33,12 @@ jobs:
         with:
           name: all-artifacts
           path: artifacts/
-
-      # - name: Upload Best Experiment
-      #   uses: actions/upload-artifact@v4.4.0
-      #   with:
-      #     name: best_experiment
-      #     path: best_experiment.pkl
       
       - name: Upload Best Model Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: model
           path: artifacts/model.pkl
-      
-      # - name: Upload Best Model Artifact
-      #   uses: actions/upload-artifact@v4.4.0
-      #   with:
-      #     name: model
-      #     path: model.pkl
 
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
@@ -70,12 +58,6 @@ jobs:
         with:
           name: all-artifacts
           path: downloaded_artifacts/
-        
-      # - name: Download Best Model Artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: model
-      #     path: model.pkl
 
       - name: List downloaded artifacts
         run: |
