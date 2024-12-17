@@ -29,8 +29,8 @@ jobs:
           version: "0.14.0"
 
       - name: Create and Upload Artifacts
-        run: |
-          mkdir -p artifacts
+        # run: |
+        #   mkdir -p artifacts
         uses: actions/upload-artifact@v4.4.0
         with:
           name: all_artifacts
