@@ -71,6 +71,11 @@ jobs:
           name: all-artifacts
           path: downloaded_artifacts/
 
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing files in downloaded_artifacts directory:"
+          ls -la downloaded_artifacts/
+
       - name: Verify Artifacts
         run: |
           REQUIRED_FILES=("best_experiment.pkl" "cat_missing_impute.csv" "columns_drift.json" "columns_list.json" "date_limits.json" "lr_model.pkl" "model.pkl" "model_results.json" "outlier_summary.csv" "raw_data.csv" "scaler.pkl" "train_data.csv" "train_data_gold.csv" "xgboost_model.json" "xgboost_model.pkl")
