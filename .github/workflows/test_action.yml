@@ -28,35 +28,43 @@ jobs:
           args: go run pipeline.go
           version: "0.14.0"
 
-      - name: Upload Train Data
+      - name: Create and Upload Artifacts
+        run: |
+          mkdir -p artifacts
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: train_data
-          path: train_data.csv
+          name: all_artifacts
+          path: artifacts/
 
-      - name: Upload LR Model Artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: lr_model
-          path: lr_model.pkl
+      # - name: Upload Train Data
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: train_data
+      #     path: train_data.csv
 
-      - name: Upload XGBoost Model Artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: xgboost_model
-          path: xgboost_model.pkl
+      # - name: Upload LR Model Artifact
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: lr_model
+      #     path: lr_model.pkl
+
+      # - name: Upload XGBoost Model Artifact
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: xgboost_model
+      #     path: xgboost_model.pkl
       
-      - name: Upload Best Model Artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: model
-          path: model.pkl
+      # - name: Upload Best Model Artifact
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: model
+      #     path: model.pkl
 
-      - name: Upload Best Experiment
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: best_experiment
-          path: best_experiment.pkl
+      # - name: Upload Best Experiment
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: best_experiment
+      #     path: best_experiment.pkl
 
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
@@ -71,30 +79,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Unit Test Train Data
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: train_data
+          name: all_artifacts
+          path: downloaded_artifacts/
 
-      - name: Unit Test LR Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lr_model
+      - name: Verify Specific Files in Artifacts
+        run: |
+          # Define required files
+          REQUIRED_FILES=("model.pkl" "best_experiment.pkl")
 
-      - name: Unit Test XGBoost Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: xgboost_model
+          # Check for each file
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "downloaded_artifacts/$file" ]; then
+              echo "Found $file"
+            else
+              echo "Missing $file"
+              exit 1
+            fi
+          done
 
-      - name: Unit Test Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: model
+          echo "All required files are present."
+          
+      # - name: Unit Test Train Data
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: train_data
 
-      - name: Unit Test Best Experiment
-        uses: actions/download-artifact@v4
-        with:
-          name: best_experiment
+      # - name: Unit Test LR Model Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: lr_model
+
+      # - name: Unit Test XGBoost Model Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: xgboost_model
+
+      # - name: Unit Test Model Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: model
+
+      # - name: Unit Test Best Experiment
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: best_experiment
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
