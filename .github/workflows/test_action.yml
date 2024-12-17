@@ -3,7 +3,7 @@ run-name: Testing Model 🤘
 on:
   pull_request:
     branches:
-      - main
+      - main-testing
   workflow_dispatch:
 
 jobs:
@@ -28,35 +28,29 @@ jobs:
           args: go run pipeline.go
           version: "0.14.0"
 
-      - name: Upload Train Data
+      - name: Upload All Artifacts
         uses: actions/upload-artifact@v4.4.0
         with:
-          name: train_data
-          path: train_data.csv
+          name: all-artifacts
+          path: artifacts/
 
-      - name: Upload LR Model Artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: lr_model
-          path: lr_model.pkl
-
-      - name: Upload XGBoost Model Artifact
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: xgboost_model
-          path: xgboost_model.pkl
+      # - name: Upload Best Experiment
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: best_experiment
+      #     path: best_experiment.pkl
       
       - name: Upload Best Model Artifact
         uses: actions/upload-artifact@v4.4.0
         with:
           name: model
-          path: model.pkl
-
-      - name: Upload Best Experiment
-        uses: actions/upload-artifact@v4.4.0
-        with:
-          name: best_experiment
-          path: best_experiment.pkl
+          path: artifacts/model.pkl
+      
+      # - name: Upload Best Model Artifact
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: model
+      #     path: model.pkl
 
       - name: tree
         uses: jaywcjlove/github-action-folder-tree@main
@@ -67,34 +61,41 @@ jobs:
   
   test_model:
     needs: train_and_upload
-    name: Unit Test Model Artifact
+    name: Unit Test Model Artifacts
     runs-on: ubuntu-latest
 
     steps:
-      - name: Unit Test Train Data
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: train_data
+          name: all-artifacts
+          path: downloaded_artifacts/
+        
+      # - name: Download Best Model Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: model
+      #     path: model.pkl
 
-      - name: Unit Test LR Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lr_model
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing files in downloaded_artifacts directory:"
+          ls -la downloaded_artifacts/
 
-      - name: Unit Test XGBoost Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: xgboost_model
+      - name: Verify Artifacts
+        run: |
+          REQUIRED_FILES=("best_experiment.pkl" "cat_missing_impute.csv" "columns_drift.json" "columns_list.json" "date_limits.json" "lr_model.pkl" "model.pkl" "model_results.json" "outlier_summary.csv" "raw_data.csv" "scaler.pkl" "train_data.csv" "train_data_gold.csv" "xgboost_model.json" "xgboost_model.pkl")
 
-      - name: Unit Test Model Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: model
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "downloaded_artifacts/$file" ]; then
+              echo "Found $file"
+            else
+              echo "Missing $file"
+              exit 1
+            fi
+          done
 
-      - name: Unit Test Best Experiment
-        uses: actions/download-artifact@v4
-        with:
-          name: best_experiment
+          echo "All required files are present."
 
       - name: Run Model Inference Test Action
         uses: PLtier/itu-sdse-project-model-validator@main
