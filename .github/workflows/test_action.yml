@@ -28,11 +28,23 @@ jobs:
           args: go run pipeline.go
           version: "0.14.0"
 
-      - name: Upload Artifacts Folder
-        uses: actions/upload-artifact@v4.4.0
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: all_artifacts
-          path: artifacts/
+          name: all-artifacts
+          path: downloaded_artifacts/
+
+      # - name: Upload Best Experiment
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: best_experiment
+      #     path: best_experiment.pkl
+      
+      # - name: Upload Best Model Artifact
+      #   uses: actions/upload-artifact@v4.4.0
+      #   with:
+      #     name: model
+      #     path: model.pkl
       
       # - name: Upload Best Model Artifact
       #   uses: actions/upload-artifact@v4.4.0
@@ -64,7 +76,7 @@ jobs:
           REQUIRED_FILES=("best_experiment.pkl" "cat_missing_impute.csv" "columns_drift.json" "columns_list.json" "date_limits.json" "lr_model.pkl" "model.pkl" "model_results.json" "outlier_summary.csv" "raw_data.csv" "scaler.pkl" "train_data.csv" "train_data_gold.csv" "xgboost_model.json" "xgboost_model.pkl")
 
           for file in "${REQUIRED_FILES[@]}"; do
-            if [ -f "downloaded_artifacts/$file" ]; then
+            if [ -f "downloaded_artifacts/artifacts/$file" ]; then
               echo "Found $file"
             else
               echo "Missing $file"
