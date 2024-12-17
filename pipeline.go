@@ -85,21 +85,21 @@ func executeSelection(container *dagger.Container) *dagger.Container {
 
 func retrieveArtifacts(ctx context.Context, container *dagger.Container) error {
 	filesToExport := map[string]string{
-		"/pipeline/github_dagger_workflow_project/artifacts/best_experiment.pkl":     "best_experiment.pkl",
-		"/pipeline/github_dagger_workflow_project/artifacts/cat_missing_impute.csv":  "cat_missing_impute.csv",
-		"/pipeline/github_dagger_workflow_project/artifacts/columns_drift.json":      "columns_drift.json",
-		"/pipeline/github_dagger_workflow_project/artifacts/columns_list.json":       "columns_list.json",
-		"/pipeline/github_dagger_workflow_project/artifacts/date_limits.json":        "date_limits.json",
-		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl":       "lr_model.pkl",
-		"/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl":          "model.pkl",
-		"/pipeline/github_dagger_workflow_project/artifacts/model_results.json":      "model_results.json",
-		"/pipeline/github_dagger_workflow_project/artifacts/outlier_summary.csv":     "outlier_summary.csv",
-		"/pipeline/github_dagger_workflow_project/artifacts/raw_data.csv":            "raw_data.csv",
-		"/pipeline/github_dagger_workflow_project/artifacts/scaler.pkl":              "scaler.pkl",
-		"/pipeline/github_dagger_workflow_project/artifacts/train_data.csv":          "train_data.csv",
-		"/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv":     "train_data_gold.csv",
-		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.json": "xgboost_model.json",
-		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl":  "xgboost_model.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/best_experiment.pkl":     "artifacts/best_experiment.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/cat_missing_impute.csv":  "artifacts/cat_missing_impute.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/columns_drift.json":      "artifacts/columns_drift.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/columns_list.json":       "artifacts/columns_list.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/date_limits.json":        "artifacts/date_limits.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl":       "artifacts/lr_model.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl":          "artifacts/model.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/model_results.json":      "artifacts/model_results.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/outlier_summary.csv":     "artifacts/outlier_summary.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/raw_data.csv":            "artifacts/raw_data.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/scaler.pkl":              "artifacts/scaler.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/train_data.csv":          "artifacts/train_data.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv":     "artifacts/train_data_gold.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.json": "artifacts/xgboost_model.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl":  "artifacts/xgboost_model.pkl",
 	}
 
 	for srcPath, outputName := range filesToExport {
