@@ -96,7 +96,7 @@ func retrieveArtifacts(ctx context.Context, container *dagger.Container) error {
 		"/pipeline/github_dagger_workflow_project/artifacts/outlier_summary.csv":     "artifacts/outlier_summary.csv",
 		"/pipeline/github_dagger_workflow_project/artifacts/raw_data.csv":            "artifacts/raw_data.csv",
 		"/pipeline/github_dagger_workflow_project/artifacts/scaler.pkl":              "artifacts/scaler.pkl",
-		"/pipeline/github_dagger_workflow_project/artifacts/train_data.csv":          "artifacts/train_data.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/training_data.csv":       "artifacts/train_data.csv",
 		"/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv":     "artifacts/train_data_gold.csv",
 		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.json": "artifacts/xgboost_model.json",
 		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl":  "artifacts/xgboost_model.pkl",
