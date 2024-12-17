@@ -76,7 +76,7 @@ jobs:
           REQUIRED_FILES=("best_experiment.pkl" "cat_missing_impute.csv" "columns_drift.json" "columns_list.json" "date_limits.json" "lr_model.pkl" "model.pkl" "model_results.json" "outlier_summary.csv" "raw_data.csv" "scaler.pkl" "train_data.csv" "train_data_gold.csv" "xgboost_model.json" "xgboost_model.pkl")
 
           for file in "${REQUIRED_FILES[@]}"; do
-            if [ -f "downloaded_artifacts/artifacts/$file" ]; then
+            if [ -f "downloaded_artifacts/$file" ]; then
               echo "Found $file"
             else
               echo "Missing $file"
