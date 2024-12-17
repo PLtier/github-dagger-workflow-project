@@ -68,7 +68,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: all_artifacts
+          name: all-artifacts
           path: downloaded_artifacts/
 
       - name: Verify Artifacts
