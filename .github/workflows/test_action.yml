@@ -40,11 +40,11 @@ jobs:
       #     name: best_experiment
       #     path: best_experiment.pkl
       
-      # - name: Upload Best Model Artifact
-      #   uses: actions/upload-artifact@v4.4.0
-      #   with:
-      #     name: model
-      #     path: model.pkl
+      - name: Upload Best Model Artifact
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: model
+          path: model.pkl
       
       # - name: Upload Best Model Artifact
       #   uses: actions/upload-artifact@v4.4.0
@@ -70,6 +70,12 @@ jobs:
         with:
           name: all-artifacts
           path: downloaded_artifacts/
+        
+      # - name: Download Best Model Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: model
+      #     path: model.pkl
 
       - name: List downloaded artifacts
         run: |
