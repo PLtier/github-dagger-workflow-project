@@ -1,6 +1,6 @@
 # ITU BDS SDSE'24 - Project
 
-This project is part of the Software Development and Software Engineering at ITU. The original project description can be found [here](https://github.com/lasselundstenjensen/itu-sdse-project)
+This project is part of the Software Development and Software Engineering course at ITU. The original project description can be found [here](https://github.com/lasselundstenjensen/itu-sdse-project).
 
 In this project we were tasked with restructuring a Python monolith using the concepts we have learned throughout the course. This project contains a [Dagger workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/pipeline.go) and a [GitHub workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/.github/workflows/test_action.yml).
 
@@ -69,6 +69,6 @@ In this project we were tasked with restructuring a Python monolith using the co
 
 ### Triggering GitHub Workflow
 
-The workflow can be triggered either on pull requests to main or manually.
+The workflow can be triggered either on pull requests to `main` or manually.
 
  It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifacts can be found on the summary page of the run.
