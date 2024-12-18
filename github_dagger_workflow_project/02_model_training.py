@@ -115,10 +115,7 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
 xgboost_model_path = "./artifacts/lead_model_xgboost.json"
 xgboost_model.save_model(xgboost_model_path)
 
-# Defining model results dict
-model_results = {
-    xgboost_model_path: classification_report(y_train, y_pred_train, output_dict=True)
-}
+model_results = {}
 
 # mlflow logistic regression experiments
 with mlflow.start_run(experiment_id=experiment_id) as run:
