@@ -124,47 +124,49 @@ model_results = {}
 
 
 # mlflow logistic regression experiments
-with mlflow.start_run(experiment_id=experiment_id) as run:
-    model = LogisticRegression()
-    lr_model_path = "./artifacts/lead_model_lr.pkl"
+def train_linear_regression(X_train, X_test, y_train, y_test, experiment_id):
+    with mlflow.start_run(experiment_id=experiment_id):
+        model = LogisticRegression()
 
-    params = {
-        "solver": ["newton-cg", "lbfgs", "liblinear", "sag", "saga"],
-        "penalty": ["none", "l1", "l2", "elasticnet"],
-        "C": [100, 10, 1.0, 0.1, 0.01],
-    }
-    model_grid = RandomizedSearchCV(model, param_distributions=params, verbose=3, n_iter=10, cv=3)
-    model_grid.fit(X_train, y_train)
+        params = {
+            "solver": ["newton-cg", "lbfgs", "liblinear", "sag", "saga"],
+            "penalty": ["none", "l1", "l2", "elasticnet"],
+            "C": [100, 10, 1.0, 0.1, 0.01],
+        }
+        model_grid = RandomizedSearchCV(
+            model, param_distributions=params, verbose=3, n_iter=10, cv=3
+        )
+        model_grid.fit(X_train, y_train)
 
-    best_model = model_grid.best_estimator_
+        best_lr_model = model_grid.best_estimator_
 
-    y_pred_train = model_grid.predict(X_train)
-    y_pred_test = model_grid.predict(X_test)
+        y_pred_test = model_grid.predict(X_test)
 
-    # log artifacts
-    mlflow.log_metric("f1_score", f1_score(y_test, y_pred_test, average="binary"))
-    mlflow.log_artifacts("artifacts", artifact_path="model")
-    mlflow.log_param("data_version", "00000")
-    mlflow.log_param("model_type", "LogisticRegression")
+        # log artifacts
+        mlflow.log_metric("f1_score", f1_score(y_test, y_pred_test, average="binary"))
+        mlflow.log_artifacts("artifacts", artifact_path="model")
+        mlflow.log_param("data_version", "00000")
+        mlflow.log_param("model_type", "LogisticRegression")
+
+        # Custom python model for predicting probability
+        mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(best_lr_model))
 
     # store model for model interpretability
-    joblib.dump(value=best_model, filename=lr_model_path)
+    lr_model_path = "./artifacts/lead_model_lr.pkl"
+    joblib.dump(value=best_lr_model, filename=lr_model_path)
 
-    # Custom python model for predicting probability
-    mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(best_model))
+    # Testing model and storing the columns and model results
+    lr_cr = {lr_model_path: classification_report(y_test, y_pred_test, output_dict=True)}
 
-# Testing model and storing the columns and model results
-model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
+    return lr_cr
+
 
 xgboost_cr = train_xgboost(X_train, X_test, y_train, y_test, experiment_id)
-best_model_lr_params = model_grid.best_params_
+lr_cr = train_linear_regression(X_train, X_test, y_train, y_test, experiment_id)
 
 model_results.update(xgboost_cr)
+model_results.update(lr_cr)
 
-column_list_path = "./artifacts/columns_list.json"
-with open(column_list_path, "w+") as columns_file:
-    columns = {"column_names": list(X_train.columns)}
-    json.dump(columns, columns_file)
 
 model_results_path = "./artifacts/model_results.json"
 with open(model_results_path, "w+") as results_file:
