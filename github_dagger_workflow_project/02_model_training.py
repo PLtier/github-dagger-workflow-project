@@ -13,6 +13,14 @@ from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from xgboost import XGBRFClassifier
 
 from github_dagger_workflow_project import utils
+from github_dagger_workflow_project.config import (
+    COLUMNS_LIST_PATH,
+    XGBOOST_MODEL_PATH,
+    XGBOOST_MODEL_JSON_PATH,
+    LR_MODEL_PATH,
+    MODEL_RESULTS_PATH,
+    TRAIN_DATA_GOLD_PATH,
+)
 
 
 def prepare_data(data: pd.DataFrame) -> list[pd.DataFrame]:
@@ -46,8 +54,7 @@ def save_column_list(X_train: pd.DataFrame) -> None:
     """
     Saves the list of columns to a json file.
     """
-    column_list_path = "./artifacts/columns_list.json"
-    with open(column_list_path, "w+") as columns_file:
+    with open(COLUMNS_LIST_PATH, "w+") as columns_file:
         columns = {"column_names": list(X_train.columns)}
         json.dump(columns, columns_file)
 
@@ -80,10 +87,10 @@ def train_xgboost(X_train, X_test, y_train, y_test, experiment_id):
         # Custom python model for predicting probability
         mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(best_model_xgboost))
 
-    xgboost_model_path = "./artifacts/lead_model_xgboost.pkl"
+    xgboost_model_path = XGBOOST_MODEL_PATH
     joblib.dump(value=best_model_xgboost, filename=xgboost_model_path)
     # Save lead xgboost model as artifact
-    xgboost_model_path = "./artifacts/lead_model_xgboost.json"
+    xgboost_model_path = XGBOOST_MODEL_JSON_PATH
     best_model_xgboost.save_model(xgboost_model_path)
 
     # Defining model results dict
@@ -121,7 +128,7 @@ def train_linear_regression(X_train, X_test, y_train, y_test, experiment_id):
         mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(best_lr_model))
 
     # store model for model interpretability
-    lr_model_path = "./artifacts/lead_model_lr.pkl"
+    lr_model_path = LR_MODEL_PATH
     joblib.dump(value=best_lr_model, filename=lr_model_path)
 
     # Testing model and storing the columns and model results
@@ -131,14 +138,13 @@ def train_linear_regression(X_train, X_test, y_train, y_test, experiment_id):
 
 
 def save_model_results(model_results):
-    model_results_path = "./artifacts/model_results.json"
-    with open(model_results_path, "w+") as results_file:
+    with open(MODEL_RESULTS_PATH, "w+") as results_file:
         json.dump(model_results, results_file)
 
 
 # Constants used:
 current_date = datetime.datetime.now().strftime("%Y_%B_%d")
-data_gold_path = "./artifacts/train_data_gold.csv"
+data_gold_path = TRAIN_DATA_GOLD_PATH
 data_version = "00000"
 experiment_name = current_date
 
