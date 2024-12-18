@@ -29,11 +29,7 @@ func RunPipeline(isTesting bool) error {
 	container = executeTransformations(container)
 	container = executeTraining(container)
 	container = executeSelection(container)
-	err = retrieveTrainData(ctx, container)
-	err = retrieveLRModel(ctx, container)
-	err = retrieveXGBoostModel(ctx, container)
-	err = retrieveModel(ctx, container)
-	err = retrieveExperiment(ctx, container)
+	err = retrieveArtifacts(ctx, container)
 	if isTesting {
 		_, err = container.WithExec([]string{"python", "/pipeline/github_dagger_workflow_project/tests/verify_artifacts.py"}).Stderr(ctx)
 	}
@@ -87,42 +83,30 @@ func executeSelection(container *dagger.Container) *dagger.Container {
 	return container
 }
 
-func retrieveTrainData(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv").Export(ctx, "train_data.csv")
-	if err != nil {
-		return fmt.Errorf("failed to retrieve training data: %v", err)
+func retrieveArtifacts(ctx context.Context, container *dagger.Container) error {
+	filesToExport := map[string]string{
+		"/pipeline/github_dagger_workflow_project/artifacts/best_experiment.pkl":     "artifacts/best_experiment.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/cat_missing_impute.csv":  "artifacts/cat_missing_impute.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/columns_drift.json":      "artifacts/columns_drift.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/columns_list.json":       "artifacts/columns_list.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/date_limits.json":        "artifacts/date_limits.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl":       "artifacts/lr_model.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl":          "artifacts/model.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/model_results.json":      "artifacts/model_results.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/outlier_summary.csv":     "artifacts/outlier_summary.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/raw_data.csv":            "artifacts/raw_data.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/scaler.pkl":              "artifacts/scaler.pkl",
+		"/pipeline/github_dagger_workflow_project/artifacts/training_data.csv":       "artifacts/train_data.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/train_data_gold.csv":     "artifacts/train_data_gold.csv",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.json": "artifacts/xgboost_model.json",
+		"/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl":  "artifacts/xgboost_model.pkl",
 	}
-	return nil
-}
 
-func retrieveLRModel(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_lr.pkl").Export(ctx, "lr_model.pkl")
-	if err != nil {
-		return fmt.Errorf("failed to retrieve LR model: %v", err)
-	}
-	return nil
-}
-
-func retrieveXGBoostModel(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/lead_model_xgboost.pkl").Export(ctx, "xgboost_model.pkl")
-	if err != nil {
-		return fmt.Errorf("failed to retrieve XGBoost model: %v", err)
-	}
-	return nil
-}
-
-func retrieveModel(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_model.pkl").Export(ctx, "model.pkl")
-	if err != nil {
-		return fmt.Errorf("failed to retrieve best model: %v", err)
-	}
-	return nil
-}
-
-func retrieveExperiment(ctx context.Context, container *dagger.Container) error {
-	_, err := container.File("/pipeline/github_dagger_workflow_project/artifacts/best_experiment.pkl").Export(ctx, "best_experiment.pkl")
-	if err != nil {
-		return fmt.Errorf("failed to retrieve best experiment: %v", err)
+	for srcPath, outputName := range filesToExport {
+		_, err := container.File(srcPath).Export(ctx, outputName)
+		if err != nil {
+			return fmt.Errorf("failed to retrieve and rename file %s: %v", srcPath, err)
+		}
 	}
 	return nil
 }

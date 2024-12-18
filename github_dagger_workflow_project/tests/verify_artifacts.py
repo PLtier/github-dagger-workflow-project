@@ -17,6 +17,7 @@ files_to_check = [
     "train_data_gold.csv",
     "training_data.csv",
     "best_model.pkl",
+    "best_experiment.pkl",
 ]
 
 missing_files = [f for f in files_to_check if not os.path.isfile(os.path.join(artifacts_dir, f))]
