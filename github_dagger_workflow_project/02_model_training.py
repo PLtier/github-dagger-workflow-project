@@ -59,7 +59,19 @@ def prepare_data(data: pd.DataFrame) -> list[pd.DataFrame]:
     return train_test_split(X, y, random_state=42, test_size=0.15, stratify=y)
 
 
+def save_column_list(X_train: pd.DataFrame) -> None:
+    """
+    Saves the list of columns to a json file.
+    """
+    column_list_path = "./artifacts/columns_list.json"
+    with open(column_list_path, "w+") as columns_file:
+        columns = {"column_names": list(X_train.columns)}
+        json.dump(columns, columns_file)
+
+
 X_train, X_test, y_train, y_test = prepare_data(data)
+
+save_column_list(X_train)
 
 mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
 experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
