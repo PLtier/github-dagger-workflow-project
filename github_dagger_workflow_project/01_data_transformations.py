@@ -4,7 +4,6 @@ import json
 import numpy as np
 import os
 import pandas as pd
-import warnings
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -33,7 +32,6 @@ min_date, max_date = initialize_dates(max_date_str, min_date_str)
 os.makedirs("artifacts", exist_ok=True)
 
 # Warnings and pandas settings
-warnings.filterwarnings("ignore")
 
 
 def load_data(file_path):
