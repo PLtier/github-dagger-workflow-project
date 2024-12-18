@@ -91,7 +91,7 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     joblib.dump(value=xgboost_model, filename=xgboost_model_path)
 
     # Custom python model for predicting probability
-    mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(xgboost_model))
+    mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(xgboost_model))
 
 # Save lead xgboost model as artifact
 xgboost_model_path = "./artifacts/lead_model_xgboost.json"
@@ -112,9 +112,7 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
         "penalty": ["none", "l1", "l2", "elasticnet"],
         "C": [100, 10, 1.0, 0.1, 0.01],
     }
-    model_grid = RandomizedSearchCV(
-        model, param_distributions=params, verbose=3, n_iter=10, cv=3
-    )
+    model_grid = RandomizedSearchCV(model, param_distributions=params, verbose=3, n_iter=10, cv=3)
     model_grid.fit(X_train, y_train)
 
     best_model = model_grid.best_estimator_
@@ -132,12 +130,10 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     joblib.dump(value=best_model, filename=lr_model_path)
 
     # Custom python model for predicting probability
-    mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(best_model))
+    mlflow.pyfunc.log_model("model", python_model=utils.ProbaModelWrapper(best_model))
 
 # Testing model and storing the columns and model results
-model_classification_report = classification_report(
-    y_test, y_pred_test, output_dict=True
-)
+model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
 
 best_model_lr_params = model_grid.best_params_
 
