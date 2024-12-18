@@ -23,17 +23,6 @@ def initialize_dates(max_date_str, min_date_str):
     return min_date, max_date
 
 
-# Define min and max date
-max_date_str = "2024-01-31"
-min_date_str = "2024-01-01"
-min_date, max_date = initialize_dates(max_date_str, min_date_str)
-
-# Create artifacts folder
-os.makedirs("artifacts", exist_ok=True)
-
-# Warnings and pandas settings
-
-
 def load_data(file_path):
     return pd.read_csv(file_path)
 
@@ -132,6 +121,17 @@ def process_and_save_artifacts(data):
     data["bin_source"] = data["source"].map(mapping)
 
     data.to_csv("./artifacts/train_data_gold.csv", index=False)
+
+
+# Define min and max date
+max_date_str = "2024-01-31"
+min_date_str = "2024-01-01"
+min_date, max_date = initialize_dates(max_date_str, min_date_str)
+
+# Create artifacts folder
+os.makedirs("artifacts", exist_ok=True)
+
+# Warnings and pandas settings
 
 
 data = load_data("./artifacts/raw_data.csv")
