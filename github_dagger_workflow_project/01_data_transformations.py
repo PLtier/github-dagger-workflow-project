@@ -8,6 +8,17 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from github_dagger_workflow_project import utils
+from github_dagger_workflow_project.config import (
+    ARTIFACTS_DIR,
+    RAW_DATA_PATH,
+    DATE_LIMITS_PATH,
+    OUTLIER_SUMMARY_PATH,
+    CAT_MISSING_IMPUTE_PATH,
+    SCALER_PATH,
+    COLUMNS_DRIFT_PATH,
+    TRAINING_DATA_PATH,
+    TRAIN_DATA_GOLD_PATH,
+)
 
 
 def initialize_dates(max_date_str, min_date_str):
@@ -83,10 +94,10 @@ def process_and_save_artifacts(data):
     )
 
     outlier_summary = cont_vars.apply(utils.describe_numeric_col).T
-    outlier_summary.to_csv("./artifacts/outlier_summary.csv")
+    outlier_summary.to_csv(OUTLIER_SUMMARY_PATH)
 
     cat_missing_impute = cat_vars.mode(numeric_only=False, dropna=True)
-    cat_missing_impute.to_csv("./artifacts/cat_missing_impute.csv")
+    cat_missing_impute.to_csv(CAT_MISSING_IMPUTE_PATH)
 
     cont_vars = cont_vars.apply(utils.impute_missing_values)
     cont_vars.apply(utils.describe_numeric_col).T
@@ -97,10 +108,9 @@ def process_and_save_artifacts(data):
         lambda x: pd.Series([x.count(), x.isnull().sum()], index=["Count", "Missing"])
     ).T
 
-    scaler_path = "./artifacts/scaler.pkl"
     scaler = MinMaxScaler()
     scaler.fit(cont_vars)
-    joblib.dump(value=scaler, filename=scaler_path)
+    joblib.dump(value=scaler, filename=SCALER_PATH)
 
     cont_vars = pd.DataFrame(scaler.transform(cont_vars), columns=cont_vars.columns)
     cont_vars = cont_vars.reset_index(drop=True)
@@ -109,10 +119,10 @@ def process_and_save_artifacts(data):
     data = pd.concat([cat_vars, cont_vars], axis=1)
 
     data_columns = list(data.columns)
-    with open("./artifacts/columns_drift.json", "w+") as f:
+    with open(COLUMNS_DRIFT_PATH, "w+") as f:
         json.dump(data_columns, f)
 
-    data.to_csv("./artifacts/training_data.csv", index=False)
+    data.to_csv(TRAINING_DATA_PATH, index=False)
 
     data["bin_source"] = data["source"]
     values_list = ["li", "organic", "signup", "fb"]
@@ -120,7 +130,7 @@ def process_and_save_artifacts(data):
     mapping = {"li": "socials", "fb": "socials", "organic": "group1", "signup": "group1"}
     data["bin_source"] = data["source"].map(mapping)
 
-    data.to_csv("./artifacts/train_data_gold.csv", index=False)
+    data.to_csv(TRAIN_DATA_GOLD_PATH, index=False)
 
 
 # Define min and max date
@@ -129,13 +139,13 @@ min_date_str = "2024-01-01"
 min_date, max_date = initialize_dates(max_date_str, min_date_str)
 
 # Create artifacts folder
-os.makedirs("artifacts", exist_ok=True)
+os.makedirs(ARTIFACTS_DIR, exist_ok=True)
 
 # Warnings and pandas settings
 
 
-data = load_data("./artifacts/raw_data.csv")
+data = load_data(RAW_DATA_PATH)
 data = filter_date_range(data, min_date, max_date)
-save_date_limits(data, "./artifacts/date_limits.json")
+save_date_limits(data, DATE_LIMITS_PATH)
 data = preprocess_data(data)
 process_and_save_artifacts(data)

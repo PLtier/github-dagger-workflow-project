@@ -1,6 +1,7 @@
 import datetime
 import shutil
 import mlflow
+from github_dagger_workflow_project.config import BEST_EXPERIMENT_PATH, BEST_MODEL_PATH
 
 
 def select_best_model(experiment_name):
@@ -13,7 +14,7 @@ def select_best_model(experiment_name):
 
 def save_best_model(experiment_best, best_model_type) -> None:
     # store the best experiment (model) metadata
-    experiment_best.to_pickle("./artifacts/best_experiment.pkl")
+    experiment_best.to_pickle(BEST_EXPERIMENT_PATH)
 
     if best_model_type == "XGBoost":
         best_model_artifact = "lead_model_xgboost.pkl"
@@ -21,7 +22,7 @@ def save_best_model(experiment_best, best_model_type) -> None:
         best_model_artifact = "lead_model_lr.pkl"
 
     original_file_path = f"./artifacts/{best_model_artifact}"
-    new_file_path = "./artifacts/best_model.pkl"
+    new_file_path = BEST_MODEL_PATH
 
     shutil.copyfile(original_file_path, new_file_path)
 

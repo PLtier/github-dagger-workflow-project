@@ -2,10 +2,11 @@ import mlflow
 import pandas as pd
 from github_dagger_workflow_project import utils
 from mlflow.tracking.client import MlflowClient
+from github_dagger_workflow_project.config import PROD_BEST_EXPERIMENT_PATH
 
 artifact_path = "model"
 model_name = "lead_model"
-experiment_best = pd.read_pickle("./artifacts/best_experiment.pkl")
+experiment_best = pd.read_pickle(PROD_BEST_EXPERIMENT_PATH)
 
 client = MlflowClient()
 prod_model = [
