@@ -37,6 +37,7 @@ func RunPipeline(isTesting bool) error {
 	container = executeSelection(container)
 	if isTesting {
 		_, err = container.
+			WithFile("./tests/verify_artifacts.py", client.Host().File("tests/verify_artifacts.py")).
 			WithExec([]string{"python", "./tests/verify_artifacts.py"}).
 			Stderr(ctx)
 	} else {
@@ -51,12 +52,13 @@ func RunPipeline(isTesting bool) error {
 }
 
 func copyCode(client *dagger.Client, container *dagger.Container) *dagger.Container {
+	host := client.Host()
 	container = container.
-		WithDirectory("./.dvc", client.Host().Directory(".dvc")).
-		WithDirectory("./.git", client.Host().Directory(".git")).
-		WithFile("./pyproject.toml", client.Host().File("pyproject.toml")).
-		WithFile("./requirements.txt", client.Host().File("pipeline_deps/requirements.txt")).
-		WithDirectory("./github_dagger_workflow_project", client.Host().Directory("github_dagger_workflow_project"))
+		WithDirectory("./.dvc", host.Directory(".dvc")).
+		WithDirectory("./.git", host.Directory(".git")).
+		WithFile("./pyproject.toml", host.File("pyproject.toml")).
+		WithFile("./requirements.txt", host.File("pipeline_deps/requirements.txt")).
+		WithDirectory("./github_dagger_workflow_project", host.Directory("github_dagger_workflow_project"))
 	return container
 }
 
