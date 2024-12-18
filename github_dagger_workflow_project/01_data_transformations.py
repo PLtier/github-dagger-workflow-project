@@ -8,7 +8,7 @@ import warnings
 
 from sklearn.preprocessing import MinMaxScaler
 
-import utils
+from github_dagger_workflow_project import utils
 
 
 # Define min and max date
