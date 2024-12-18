@@ -70,7 +70,6 @@ def train_xgboost(X_train, X_test, y_train, y_test, experiment_id):
 
         best_model_xgboost = model_grid.best_estimator_
 
-        y_pred_train = model_grid.predict(X_train)
         y_pred_test = model_grid.predict(X_test)
 
         # log artifacts
@@ -88,9 +87,7 @@ def train_xgboost(X_train, X_test, y_train, y_test, experiment_id):
     best_model_xgboost.save_model(xgboost_model_path)
 
     # Defining model results dict
-    xgboost_cr = {
-        xgboost_model_path: classification_report(y_train, y_pred_train, output_dict=True)
-    }
+    xgboost_cr = {xgboost_model_path: classification_report(y_test, y_pred_test, output_dict=True)}
 
     return xgboost_cr
 
