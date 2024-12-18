@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from xgboost import XGBRFClassifier
 
-import utils
+from github_dagger_workflow_project import utils
 
 
 # Constants used:
@@ -112,7 +112,9 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
         "penalty": ["none", "l1", "l2", "elasticnet"],
         "C": [100, 10, 1.0, 0.1, 0.01],
     }
-    model_grid = RandomizedSearchCV(model, param_distributions=params, verbose=3, n_iter=10, cv=3)
+    model_grid = RandomizedSearchCV(
+        model, param_distributions=params, verbose=3, n_iter=10, cv=3
+    )
     model_grid.fit(X_train, y_train)
 
     best_model = model_grid.best_estimator_
@@ -133,7 +135,9 @@ with mlflow.start_run(experiment_id=experiment_id) as run:
     mlflow.pyfunc.log_model("model", python_model=utils.lr_wrapper(best_model))
 
 # Testing model and storing the columns and model results
-model_classification_report = classification_report(y_test, y_pred_test, output_dict=True)
+model_classification_report = classification_report(
+    y_test, y_pred_test, output_dict=True
+)
 
 best_model_lr_params = model_grid.best_params_
 
