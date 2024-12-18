@@ -34,7 +34,6 @@ os.makedirs("artifacts", exist_ok=True)
 
 # Warnings and pandas settings
 warnings.filterwarnings("ignore")
-pd.set_option("display.float_format", lambda x: "%.3f" % x)
 
 
 def load_data(file_path):
