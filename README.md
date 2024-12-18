@@ -7,53 +7,59 @@ In this project we were tasked with restructuring a Python monolith using the co
 ## Project Structure
 
 ```
-├── README.md                         <- Project description and how to run the code
+├── README.md                        <- Project description and how to run the code
 │
-├── .dvc
-│
-├── .github/workflows                 <- Github Action workflows
+├── .github/workflows                <- Github Action workflows
 │   │
-│   ├── tag_version.yml               <- 
+│   ├── tag_version.yml              <- Workflow for creating version tags 
 │   │
-│   └── test_action.yml               <- 
+│   └── test_action.yml              <- Workflow that automatically trains and tests model
 │
-├── pipeline_deps                     <- 
+├── pipeline_deps                     
 │   │
-│   └── requirements.txt              <- Dependencies for the pipeline
+│   └── requirements.txt             <- Dependencies for the pipeline
 │
-├── CODEOWNERS                        <- Defines codeowners for the repository
+├── CODEOWNERS                       <- Defines codeowners for the repository
 │
-├── go.mod                            <- Go file that defines the module and the required dependencies
+├── go.mod                           <- Go file that defines the module and required dependencies
 │
-├── go.sum                            <-
+├── go.sum                           <- Go file that ensures continuity and integrity of dependencies
 │
-├── pipeline.go                       <- Dagger workflow written in Go
+├── pipeline.go                      <- Dagger workflow written in Go
 │
-├── pyproject.toml                    <-
+├── pyproject.toml                   <- Configuration file
 │
-├── references                        <- Documentation and extra resources 
+├── .pre-commit-config.yaml          <- Checks quality of code before commits
 │
-├── requirements.txt                  <- Python dependecies need for the project
+├── Makefile.venv                    <- Creates and manages Pythion virtual enviorment
 │
-└── github_dagger_workflow_project    <- Source code for the project
+├── references                       <- Documentation and extra resources 
+│
+├── requirements.txt                 <- Python dependecies need for the project
+│
+└── github_dagger_workflow_project   <- Source code for the project
     │
-    ├── __init__.py                   <- 
+    ├── __init__.py                  <- Marks the directory as a Python package
     │
-    ├── 01_data_transformations.py    <- Code for data preprocessing and transformation
+    ├── 01_data_transformations.py   <- Script for data preprocessing and transformation
     │
-    ├── 02_model_training.py          <- Code for training the models
+    ├── 02_model_training.py         <- Script for training the models
     │
-    ├── 03_model_selection.py         <- Code for selecting the best perfoming model
+    ├── 03_model_selection.py        <- Script for selecting the best perfoming model
     │
-    ├── 04_prod_model.py              <- Code for comparing new best model and production model
+    ├── 04_prod_model.py             <- Script for comparing new best model and production model
     │
-    ├── 05_model_deployment.py        <- Code for deploying model
+    ├── 05_model_deployment.py       <- Script for deploying model
     │
     ├── artifacts
     │   │
-    │   └── raw_data.csv.dvc          <- 
+    │   └── raw_data.csv.dvc         <- Metadata tracked by DVC for data file
     │
-    └── utils.py                      <- Helper functions
+    ├── tests
+    │   │
+    │   └── verify_artifacts.py      <- Tests to check if all artifacts are copied correctly
+    │
+    └── utils.py                     <- Helper functions
 ```
 
 ---
