@@ -12,7 +12,10 @@ experiment_ids = [mlflow.get_experiment_by_name(experiment_name).experiment_id]
 experiment_best = mlflow.search_runs(
     experiment_ids=experiment_ids, order_by=["metrics.f1_score DESC"], max_results=1
 ).iloc[0]
-best_model_type = experiment_best["params.model_type"]
+
+# Always save LR model
+# Change best_model_type to experiment_best["params.model_type"] to also consider XGBoost model
+best_model_type = "LogisticRegression"
 
 if best_model_type == "XGBoost":
     best_model_artifact = "lead_model_xgboost.pkl"
