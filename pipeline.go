@@ -20,22 +20,29 @@ func RunPipeline(isTesting bool) error {
 	}
 	defer client.Close()
 	pipCache := client.CacheVolume("pip_cache")
-	container := client.Container().From("python:3.11.9-bookworm").WithMountedCache("/root/.cache/pip", pipCache)
+	container := client.Container().From("python:3.11.9-bookworm").
+		WithMountedCache("/root/.cache/pip", pipCache)
 
-	container = container.WithExec([]string{"mkdir", "pipeline"}).WithWorkdir("/pipeline")
+	container = container.
+		WithExec([]string{"mkdir", "pipeline"}).
+		WithWorkdir("/pipeline")
 	container = copyCode(client, container)
 	container = installDeps(container)
 
-	container = container.WithWorkdir("/pipeline/github_dagger_workflow_project")
+	container = container.
+		WithWorkdir("/pipeline/github_dagger_workflow_project")
 	container = pullData(container)
 	container = executeTransformations(container)
 	container = executeTraining(container)
 	container = executeSelection(container)
 	if isTesting {
-		_, err = container.WithExec([]string{"python", "./tests/verify_artifacts.py"}).Stderr(ctx)
+		_, err = container.
+			WithExec([]string{"python", "./tests/verify_artifacts.py"}).
+			Stderr(ctx)
 	} else {
 		err = retrieveArtifacts(ctx, container)
 	}
+	container = container.WithWorkdir("/")
 	if err != nil {
 		return fmt.Errorf("failed to run pipeline: %v", err)
 	}
@@ -98,7 +105,9 @@ func retrieveArtifacts(ctx context.Context, container *dagger.Container) error {
 	}
 
 	for srcPath, outputName := range filesToExport {
-		_, err := container.File(srcPath).Export(ctx, outputName)
+		_, err := container.
+			File(srcPath).
+			Export(ctx, outputName)
 		if err != nil {
 			return fmt.Errorf("failed to retrieve and rename file %s: %v", srcPath, err)
 		}
