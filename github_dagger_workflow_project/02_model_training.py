@@ -29,31 +29,37 @@ os.makedirs("mlruns/.trash", exist_ok=True)
 # Set mlflow experiment
 mlflow.set_experiment(experiment_name)
 
-# Loading data and treating selected columns as floats
 data = pd.read_csv(data_gold_path)
-data = data.drop(["lead_id", "customer_code", "date_part"], axis=1)
 
-cat_cols = ["customer_group", "onboarding", "bin_source", "source"]
-cat_vars = data[cat_cols]
-other_vars = data.drop(cat_cols, axis=1)
 
-for col in cat_vars:
-    cat_vars[col] = cat_vars[col].astype("category")
-    cat_vars = utils.create_dummy_cols(cat_vars, col)
+def prepare_data(data: pd.DataFrame) -> list[pd.DataFrame]:
+    """
+    Drops unnecessary columns,
+    creates dummy variables for categorical features,
+    sets float as common type for all features,
+    then splits the data into train and test sets.
+    """
 
-data = pd.concat([other_vars, cat_vars], axis=1)
+    data = data.drop(["lead_id", "customer_code", "date_part"], axis=1)
 
-for col in data:
-    data[col] = data[col].astype("float64")
+    cat_cols = ["customer_group", "onboarding", "bin_source", "source"]
+    cat_vars = data[cat_cols]
+    for col in cat_vars:
+        cat_vars[col] = cat_vars[col].astype("category")
+        cat_vars = utils.create_dummy_cols(cat_vars, col)
 
-# Defining input and output variables
-y = data["lead_indicator"]
-X = data.drop(["lead_indicator"], axis=1)
+    other_vars = data.drop(cat_cols, axis=1)
+    data = pd.concat([other_vars, cat_vars], axis=1)
+    for col in data:
+        data[col] = data[col].astype("float64")
 
-# Splitting into train and test data
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, random_state=42, test_size=0.15, stratify=y
-)
+    y = data["lead_indicator"]
+    X = data.drop(["lead_indicator"], axis=1)
+
+    return train_test_split(X, y, random_state=42, test_size=0.15, stratify=y)
+
+
+X_train, X_test, y_train, y_test = prepare_data(data)
 
 mlflow.sklearn.autolog(log_input_examples=True, log_models=False)
 experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
