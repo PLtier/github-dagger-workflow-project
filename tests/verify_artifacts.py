@@ -10,6 +10,7 @@ files_to_check = [
     "date_limits.json",
     "lead_model_lr.pkl",
     "lead_model_xgboost.json",
+    "lead_model_xgboost.pkl",
     "model_results.json",
     "outlier_summary.csv",
     "raw_data.csv",
@@ -26,5 +27,5 @@ if missing_files:
     print(f"Missing files: {', '.join(missing_files)}")
     sys.exit(1)  # Exit with non-zero status to indicate failure
 else:
-    print("All required files are present.")
+    print("All required files are present!")
     sys.exit(0)  # Exit with zero status to indicate success

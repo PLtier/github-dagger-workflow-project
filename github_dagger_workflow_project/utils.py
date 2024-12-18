@@ -38,7 +38,7 @@ def create_dummy_cols(df, col):
     return new_df
 
 
-class lr_wrapper(mlflow.pyfunc.PythonModel):
+class ProbaModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, model):
         self.model = model
 
