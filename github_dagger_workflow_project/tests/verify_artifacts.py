@@ -10,6 +10,7 @@ files_to_check = [
     "date_limits.json",
     "lead_model_lr.pkl",
     "lead_model_xgboost.json",
+    "lead_model_xgboost.pkl",
     "model_results.json",
     "outlier_summary.csv",
     "raw_data.csv",
@@ -20,7 +21,9 @@ files_to_check = [
     "best_experiment.pkl",
 ]
 
-missing_files = [f for f in files_to_check if not os.path.isfile(os.path.join(artifacts_dir, f))]
+missing_files = [
+    f for f in files_to_check if not os.path.isfile(os.path.join(artifacts_dir, f))
+]
 
 if missing_files:
     print(f"Missing files: {', '.join(missing_files)}")
