@@ -4,7 +4,8 @@ import (
 	"testing"
 )
 
-func TestRunPipeline(t *testing.T) {
+// It checkes whether all of the necessary artifacts are generated (the last step)
+func TestPipelineAndAllArtifacts(t *testing.T) {
 	if err := RunPipeline(true); err != nil {
 		t.Fatalf("Pipeline execution failed: %v", err)
 	}

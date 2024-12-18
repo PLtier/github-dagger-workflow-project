@@ -29,5 +29,5 @@ if missing_files:
     print(f"Missing files: {', '.join(missing_files)}")
     sys.exit(1)  # Exit with non-zero status to indicate failure
 else:
-    print("All required files are present.")
+    print("All required files are present!")
     sys.exit(0)  # Exit with zero status to indicate success
