@@ -28,9 +28,10 @@ from github_dagger_workflow_project.config import (
     XGBOOST_MODEL_JSON_PATH,
     LR_MODEL_PATH,
     MODEL_RESULTS_PATH,
-    BEST_EXPERIMENT_PATH, 
+    BEST_EXPERIMENT_PATH,
     BEST_MODEL_PATH,
 )
+
 
 def initialize_dates(max_date_str, min_date_str):
     """
@@ -62,26 +63,33 @@ def save_date_limits(data, file_path):
         json.dump(date_limits, f)
 
 
-def preprocess_data(data):
-    data = data.drop(
-        [
-            "is_active",
-            "marketing_consent",
-            "first_booking",
-            "existing_customer",
-            "last_seen",
-        ],
-        axis=1,
-    )
-    data = data.drop(
-        ["domain", "country", "visited_learn_more_before_booking", "visited_faq"], axis=1
-    )
-    data["lead_indicator"].replace("", np.nan, inplace=True)
-    data["lead_id"].replace("", np.nan, inplace=True)
-    data["customer_code"].replace("", np.nan, inplace=True)
-    data = data.dropna(axis=0, subset=["lead_indicator"])
-    data = data.dropna(axis=0, subset=["lead_id"])
+def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Preprocesses data by:
+    Drops unnecessary columns.
+    Replaces empty strings with NaN in specific columns.
+    Removes rows with missing values in critical columns.
+    Filters rows based on the 'source' column being 'signup'.
+    """
+    columns_to_drop = [
+        "is_active",
+        "marketing_consent",
+        "first_booking",
+        "existing_customer",
+        "last_seen",
+        "domain",
+        "country",
+        "visited_learn_more_before_booking",
+        "visited_faq",
+    ]
+    data = data.drop(columns=columns_to_drop, axis=1)
+
+    columns_to_clean = ["lead_indicator", "lead_id", "customer_code"]
+    data[columns_to_clean] = data[columns_to_clean].replace("", np.nan)
+
+    data = data.dropna(subset=["lead_indicator", "lead_id"])
     data = data[data.source == "signup"]
+
     return data
 
 
