@@ -15,7 +15,7 @@ In this project we were tasked with restructuring a Python monolith using the co
 │   │
 │   ├── tag_version.yml              <- Workflow for creating version tags
 │   │
-│   └── test_action.yml              <- Workflow that automatically trains and tests model
+│   └── log_and_test_action.yml      <- Workflow that automatically trains and tests model
 │
 ├── pipeline_deps
 │   │
@@ -39,6 +39,10 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 ├── requirements.txt                 <- Python dependencies need for the project
 │
+├── tests
+│   │
+│   └── verify_artifacts.py          <- Tests to check if all artifacts are copied correctly
+│
 └── github_dagger_workflow_project   <- Source code for the project
     │
     ├── __init__.py                  <- Marks the directory as a Python package
@@ -56,10 +60,6 @@ In this project we were tasked with restructuring a Python monolith using the co
     ├── artifacts
     │   │
     │   └── raw_data.csv.dvc         <- Metadata tracked by DVC for data file
-    │
-    ├── tests
-    │   │
-    │   └── verify_artifacts.py      <- Tests to check if all artifacts are copied correctly
     │
     └── utils.py                     <- Helper functions
 ```
