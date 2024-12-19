@@ -37,5 +37,10 @@ ignore = [
   "ISC001", # single-line-implicit-string-concatenation
 ]
 
+select = [
+"E", # PEP 8 Errors
+"W", # PEP 8 warnings
+]
+
 
 

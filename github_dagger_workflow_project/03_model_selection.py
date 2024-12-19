@@ -33,7 +33,8 @@ experiment_name = current_date
 
 experiment_best = select_best_model(experiment_name)
 # Save best model
-# Currently we pick only LR, no matter what the best model is. When ready, uncomment to consider xgboost.
+# Currently we pick only LR, no matter what the best model is.
+# When ready, uncomment to consider xgboost.
 # best_model_type = experiment_best["params.model_type"]
 # and comment below code
 best_model_type = "LogisticRegression"
