@@ -4,6 +4,8 @@ This project is part of the Software Development and Software Engineering course
 
 In this project we were tasked with restructuring a Python monolith using the concepts we have learned throughout the course. This project contains a [Dagger workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/pipeline.go) and a [GitHub workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/.github/workflows/test_action.yml).
 
+![Goal](./references/project-architecture.png)
+
 ## Project Structure
 
 ```
@@ -62,8 +64,6 @@ In this project we were tasked with restructuring a Python monolith using the co
     └── utils.py                     <- Helper functions
 ```
 
----
-
 # How to run the code
 
 ## Artifact creation
@@ -74,35 +74,37 @@ It can be triggered manually [here](https://github.com/PLtier/github-dagger-work
 The testing is automatically run afterwards to let the user check if it was of a quality.
 Artifacts are stored for 90 days.
 
-## Local development
+## Local development / Running
 
 ### Environment installation
 
-You need to have downloaded:
+For local running you need:
 
 - `docker`
 - `dagger` >= 15
+
+For local development you need as well:
+
 - `go` - 1.23.3 is currently used.
 - `git`
 - `python` >=3.11.9
+- `make`
 
 Then run:
 
 ```shell
 make setup
-.venv\Scripts\activate # windows
-source .venv/bin/activate # unix
-go mod tidy
+.venv\Scripts\activate # for windows
+source .venv/bin/activate # for linux/macos
 ```
 
-It installs `pre-commit` which takes care of formatting and linting before commits for go and python. (we use `ruff`, `ruff format`, `gofmt` and `govet`)
+Additionally, It installs `pre-commit` which takes care of formatting and linting before commits for go and python.
 
 ### Running the code:
 
 #### Run scripts on the host machine
 
 For that you can run scripts sequentially in the github_dagger_workflow_project.
-Callout:
 
 > Beware: all artifacts will be appended to your repo dir!
 
@@ -111,7 +113,7 @@ Callout:
 The command will run the `dagger` pipeline. In the end, **only** final artifacts will be appended to
 
 ```shell
-make run
+make container_run
 ```
 
 #### Local testing
@@ -130,7 +132,7 @@ The same workflow which generates artifacts automatically runs the inference tes
 
 ## Maintaining code quality
 
-- We used `pre-commit` to lint and format, as stated above.
+- We used `pre-commit` to lint and format, as stated above. We use `ruff`, `ruff format`, `gofmt` and `govet`. We check for PEP8 warnings and errors.
 - `main` branch-protection (with github repo settings)
   - PR is required before merging
   - at least one approval is needed. We automatically assign reviewers with `CODEOWNERS` file.
@@ -143,16 +145,6 @@ The same workflow which generates artifacts automatically runs the inference tes
 On every push to main a new tag is released with the current time it was published.
 See current tags: [Tags](https://github.com/PLtier/github-dagger-workflow-project/tags)
 
-### Decisions which have been made
+# Code decisions and reflections
 
-- We have noticed a few strong signs an XGBoost was supposed to be in the pipeline. We initially included it, but finally decided on wrapping the code in such a way, that by one-liner one can start effectively compare LR with XGBoost. Please read more in: _Originally posted by @PLtier in [#3 Issues](https://github.com/PLtier/github-dagger-workflow-project/issues/3#issuecomment-2551304436)_
-- We strived to encapsulate as much of the code into functions (no global variables shared except constants). This was to improve
-  - readibility
-  - better troubleshooting
-  - not polluting global namespace (so fewer bugs)
-- We sorted imports. For our module we use absolute imports.
-- We have removed unnecessary code.
-
-### what to improve upon
-
-Take out tests out of the production code as right now we do it.
+> This is not the part of the documentation: you can read about a few (hard) decisions we have made on [Reflections](./references/project_reflections.md)
