@@ -11,3 +11,6 @@ setup: venv
 .PHONY: test
 test:
 	dagger run go test -v
+
+.PHONY: container_run
+	dagger run go run pipeline.go
