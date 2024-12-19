@@ -7,7 +7,7 @@ name="github_dagger_workflow_project"
 description="A project to demonstrate the Dagger workflow"
 version="0.0.1"
 
-requires-python = ">=3.11.9"
+requires-python = ">=3.12.2"
 
 [tool.ruff.format]
 exclude = ['.git', '.venv']

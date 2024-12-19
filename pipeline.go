@@ -20,7 +20,7 @@ func RunPipeline(isTesting bool) error {
 	}
 	defer client.Close()
 	pipCache := client.CacheVolume("pip_cache")
-	container := client.Container().From("python:3.11.9-bookworm").
+	container := client.Container().From("python:3.12.2-bookworm").
 		WithMountedCache("/root/.cache/pip", pipCache)
 
 	container = container.
@@ -117,6 +117,7 @@ func retrieveArtifacts(ctx context.Context, container *dagger.Container) error {
 	return nil
 }
 
+// Helper function
 func ls(ctx context.Context, container *dagger.Container, dir string, message string) {
 	fmt.Println(message)
 	info, err := container.WithWorkdir(dir).WithExec([]string{"ls", "-la"}).Stdout(ctx)
