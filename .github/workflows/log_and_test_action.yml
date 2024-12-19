@@ -1,5 +1,5 @@
-name: Test Model on main PR
-run-name: Testing Model 🤘
+name: Log & Test Artifacts incl. Model
+run-name: Logging Artifacts & Testing Model 🤘
 on:
   pull_request:
     branches:
