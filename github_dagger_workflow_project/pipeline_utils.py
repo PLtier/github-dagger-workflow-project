@@ -88,6 +88,7 @@ def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
     data[columns_to_clean] = data[columns_to_clean].replace("", np.nan)
 
     data = data.dropna(axis=0, subset=["lead_indicator", "lead_id"])
+
     data = data[data.source == "signup"]
 
     return data
