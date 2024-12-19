@@ -30,7 +30,7 @@ experiment_id = mlflow.get_experiment_by_name(EXPERIMENT_NAME).experiment_id
 
 model_results = {}
 xgboost_cr = pu.train_xgboost(X_train, X_test, y_train, y_test, experiment_id)
-lr_cr = pu.train_linear_regression(X_train, X_test, y_train, y_test, experiment_id)
+lr_cr = pu.train_logistic_regression(X_train, X_test, y_train, y_test, experiment_id)
 
 model_results.update(xgboost_cr)
 model_results.update(lr_cr)
