@@ -1,3 +1,5 @@
+import datetime
+
 ARTIFACTS_DIR = "artifacts"
 RAW_DATA_PATH = "./artifacts/raw_data.csv"
 DATE_LIMITS_PATH = "./artifacts/date_limits.json"
@@ -15,3 +17,11 @@ MODEL_RESULTS_PATH = "./artifacts/model_results.json"
 BEST_EXPERIMENT_PATH = "./artifacts/best_experiment.pkl"
 BEST_MODEL_PATH = "./artifacts/best_model.pkl"
 PROD_BEST_EXPERIMENT_PATH = "./artifacts/best_experiment.pkl"
+MAX_DATE_STR = "2024-01-31"
+MIN_DATE_STR = "2024-01-01"
+CURRENT_DATE = datetime.datetime.now().strftime("%Y_%B_%d")
+EXPERIMENT_NAME = CURRENT_DATE
+DATA_GOLD_PATH = TRAIN_DATA_GOLD_PATH
+ARTIFACT_PATH = "model"
+MODEL_NAME = "lead_model"
+MODEL_VERSION = 1
