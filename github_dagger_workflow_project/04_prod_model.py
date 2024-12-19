@@ -4,10 +4,6 @@ from github_dagger_workflow_project import utils
 from github_dagger_workflow_project.config import PROD_BEST_EXPERIMENT_PATH
 from github_dagger_workflow_project.mlflow_client import client
 
-artifact_path = "model"
-model_name = "lead_model"
-experiment_best = pd.read_pickle(PROD_BEST_EXPERIMENT_PATH)
-
 
 def get_production_model(model_name):
     return [
@@ -27,6 +23,11 @@ def register_and_wait_model(run_id, artifact_path, model_name):
     model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
     utils.wait_until_ready(model_details.name, model_details.version)
     return dict(model_details)
+
+
+artifact_path = "model"
+model_name = "lead_model"
+experiment_best = pd.read_pickle(PROD_BEST_EXPERIMENT_PATH)
 
 
 train_model_score = experiment_best["metrics.f1_score"]
