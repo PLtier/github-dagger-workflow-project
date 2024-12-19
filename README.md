@@ -29,11 +29,13 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 ├── pipeline.go                      <- Dagger workflow written in Go
 │
-├── pyproject.toml                   <- Configuration file
+├── pyproject.toml                   <- Project metadata and configuration
 │
 ├── .pre-commit-config.yaml          <- Checks quality of code before commits
 │
-├── Makefile.venv                    <- Creates and manages Python virtual environment
+├── Makefile.venv                    <- Library for managing venv via makefile
+│
+├── Makefile                         <- Project related scripts
 │
 ├── references                       <- Documentation and extra resources
 │
@@ -57,11 +59,15 @@ In this project we were tasked with restructuring a Python monolith using the co
     │
     ├── 05_model_deployment.py       <- Script for deploying model
     │
+    ├── config.py                    <- Constants and paths used in the pipeline's scripts
+    │
+    ├── pipeline_utils.py            <- Encapsulated code from the .py monolith.
+    │
     ├── artifacts
     │   │
     │   └── raw_data.csv.dvc         <- Metadata tracked by DVC for data file
     │
-    └── utils.py                     <- Helper functions
+    └── utils.py                     <- Helper functions extracted from the .py monolith
 ```
 
 # How to run the code
@@ -70,7 +76,7 @@ In this project we were tasked with restructuring a Python monolith using the co
 
 The workflow can be triggered either on pull requests to `main` or manually.
 
-It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifact can be found on the summary page of the run of the first job. We also store other artifacts for convenience.
+It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/log_and_test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifact can be found on the summary page of the run of the first job. We also store other artifacts for convenience.
 The testing is automatically run afterwards to let the user check if it was of a quality.
 Artifacts are stored for 90 days.
 
@@ -80,15 +86,15 @@ Artifacts are stored for 90 days.
 
 For local running you need:
 
-- `docker`
-- `dagger` >= 15
+- `docker` (Server): >= 4.36
+- `dagger` >= 0.14
 
 For local development you need as well:
 
 - `go` - 1.23.3 is currently used.
-- `git`
-- `python` >=3.11.9
-- `make`
+- `git` >= 2.39
+- `python` >= 3.11
+- `make` >= 3.81 (lower should work too)
 
 Then run:
 
