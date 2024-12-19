@@ -21,4 +21,5 @@ Below is not the part of the documentation.
 
 ## What to improve upon
 
-- Take out tests out of the production code as right now we do it.
+- Take out tests out of the production code as right now we do it
+- Modularise pipeline.go. We think that now it's fine to keep helper/util function within the pipeline file as there are not many of them, but we see that we could have put them already somewhere else.
