@@ -12,4 +12,4 @@ experiment_best = pu.select_best_model(EXPERIMENT_NAME)
 # best_model_type = experiment_best["params.model_type"]
 # and comment below code
 best_model_type = "LogisticRegression"
-pu.save_best_model(EXPERIMENT_NAME, best_model_type)
+pu.save_best_model(experiment_best, best_model_type)
