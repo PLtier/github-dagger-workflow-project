@@ -1,12 +1,10 @@
-from mlflow.tracking import MlflowClient
-
 from github_dagger_workflow_project import utils
+from github_dagger_workflow_project.mlflow_client import client
 
 model_version = 1
 model_name = "lead_model"
 model_status = True
 
-client = MlflowClient()
 
 model_version_details = dict(client.get_model_version(name=model_name, version=model_version))
 
