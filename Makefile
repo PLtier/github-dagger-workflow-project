@@ -7,3 +7,6 @@ all: setup test
 setup: venv
 	$(VENV)/pre-commit install
 
+.PHONY: test
+test:
+	dagger run go test -v
