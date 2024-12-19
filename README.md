@@ -11,11 +11,11 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 ├── .github/workflows                <- GitHub Action workflows
 │   │
-│   ├── tag_version.yml              <- Workflow for creating version tags 
+│   ├── tag_version.yml              <- Workflow for creating version tags
 │   │
 │   └── test_action.yml              <- Workflow that automatically trains and tests model
 │
-├── pipeline_deps                     
+├── pipeline_deps
 │   │
 │   └── requirements.txt             <- Dependencies for the pipeline
 │
@@ -33,7 +33,7 @@ In this project we were tasked with restructuring a Python monolith using the co
 │
 ├── Makefile.venv                    <- Creates and manages Python virtual environment
 │
-├── references                       <- Documentation and extra resources 
+├── references                       <- Documentation and extra resources
 │
 ├── requirements.txt                 <- Python dependencies need for the project
 │
@@ -64,11 +64,95 @@ In this project we were tasked with restructuring a Python monolith using the co
 
 ---
 
+# How to run the code
 
-## How to run the code
-
-### Triggering GitHub Workflow
+## Artifact creation
 
 The workflow can be triggered either on pull requests to `main` or manually.
 
- It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifacts can be found on the summary page of the run.
+It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifact can be found on the summary page of the run of the first job. We also store other artifacts for convenience.
+The testing is automatically run afterwards to let the user check if it was of a quality.
+Artifacts are stored for 90 days.
+
+## Local development
+
+### Environment installation
+
+You need to have downloaded:
+
+- `docker`
+- `dagger` >= 15
+- `go` - 1.23.3 is currently used.
+- `git`
+- `python` >=3.11.9
+
+Then run:
+
+```shell
+make setup
+.venv\Scripts\activate # windows
+source .venv/bin/activate # unix
+go mod tidy
+```
+
+It installs `pre-commit` which takes care of formatting and linting before commits for go and python. (we use `ruff`, `ruff format`, `gofmt` and `govet`)
+
+### Running the code:
+
+#### Run scripts on the host machine
+
+For that you can run scripts sequentially in the github_dagger_workflow_project.
+Callout:
+
+> Beware: all artifacts will be appended to your repo dir!
+
+#### Run in a container
+
+The command will run the `dagger` pipeline. In the end, **only** final artifacts will be appended to
+
+```shell
+make run
+```
+
+#### Local testing
+
+Perhaps most useful. It will not append any of the container-produced files to the host machine, but it will run a test script **which will ensure that all important artifacts are indeed logged**
+
+```shell
+make test
+```
+
+> Beware: it will not test the model on the inference test!
+
+## Inference testing
+
+The same workflow which generates artifacts automatically runs the inference testing. Also, the artifacts testing and the inference test is carried out after every PR (and subsequent commits) to `main`
+
+## Maintaining code quality
+
+- We used `pre-commit` to lint and format, as stated above.
+- `main` branch-protection (with github repo settings)
+  - PR is required before merging
+  - at least one approval is needed. We automatically assign reviewers with `CODEOWNERS` file.
+  - we required status checks to be passed for both of our jobs i.e. `Train and Upload Model` and `Unit Test Model Artifacts`. The test checks explicitly whether all artifacts have been generated and if the model passes inference test. Jobs are automatically triggered on merge.
+- We maintained a clear goals via `Issues` and often quite verbose reviews.
+- we used 90% of time semantic commits
+
+## Code releases
+
+On every push to main a new tag is released with the current time it was published.
+See current tags: [Tags](https://github.com/PLtier/github-dagger-workflow-project/tags)
+
+### Decisions which have been made
+
+- We have noticed a few strong signs an XGBoost was supposed to be in the pipeline. We initially included it, but finally decided on wrapping the code in such a way, that by one-liner one can start effectively compare LR with XGBoost. Please read more in: _Originally posted by @PLtier in [#3 Issues](https://github.com/PLtier/github-dagger-workflow-project/issues/3#issuecomment-2551304436)_
+- We strived to encapsulate as much of the code into functions (no global variables shared except constants). This was to improve
+  - readibility
+  - better troubleshooting
+  - not polluting global namespace (so fewer bugs)
+- We sorted imports. For our module we use absolute imports.
+- We have removed unnecessary code.
+
+### what to improve upon
+
+Take out tests out of the production code as right now we do it.
