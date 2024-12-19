@@ -230,7 +230,7 @@ def train_xgboost(X_train, X_test, y_train, y_test, experiment_id):
 
 
 # mlflow logistic regression experiments
-def train_linear_regression(X_train, X_test, y_train, y_test, experiment_id):
+def train_logistic_regression(X_train, X_test, y_train, y_test, experiment_id):
     with mlflow.start_run(experiment_id=experiment_id):
         model = LogisticRegression()
 
