@@ -6,6 +6,7 @@ all: setup test
 .PHONY: setup
 setup: venv
 	$(VENV)/pre-commit install
+	go mod download
 
 .PHONY: test
 test:
