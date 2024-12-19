@@ -1,60 +1,156 @@
-# github-dagger-workflow-project
+# ITU BDS SDSE'24 - Project
 
-<a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
-    <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
-</a>
+This project is part of the Software Development and Software Engineering course at ITU. The original project description can be found [here](https://github.com/lasselundstenjensen/itu-sdse-project).
 
-A short description of the project.
+In this project we were tasked with restructuring a Python monolith using the concepts we have learned throughout the course. This project contains a [Dagger workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/pipeline.go) and a [GitHub workflow](https://github.com/PLtier/github-dagger-workflow-project/blob/main/.github/workflows/test_action.yml).
 
-## Project Organization
+![Goal](./references/project-architecture.png)
+
+## Project Structure
 
 ```
-├── LICENSE            <- Open-source license if one is chosen
-├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
-├── README.md          <- The top-level README for developers using this project.
-├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
+├── README.md                        <- Project description and how to run the code
 │
-├── docs               <- A default mkdocs project; see www.mkdocs.org for details
+├── .github/workflows                <- GitHub Action workflows
+│   │
+│   ├── tag_version.yml              <- Workflow for creating version tags
+│   │
+│   └── log_and_test_action.yml      <- Workflow that automatically trains and tests model
 │
-├── models             <- Trained and serialized models, model predictions, or model summaries
+├── pipeline_deps
+│   │
+│   └── requirements.txt             <- Dependencies for the pipeline
 │
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
+├── CODEOWNERS                       <- Defines codeowners for the repository
 │
-├── pyproject.toml     <- Project configuration file with package metadata for
-│                         github-dagger-workflow-project and configuration for tools like black
+├── go.mod                           <- Go file that defines the module and required dependencies
 │
-├── references         <- Data dictionaries, manuals, and all other explanatory materials.
+├── go.sum                           <- Go file that ensures continuity and integrity of dependencies
 │
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
+├── pipeline.go                      <- Dagger workflow written in Go
 │
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
+├── pyproject.toml                   <- Project metadata and configuration
 │
-├── setup.cfg          <- Configuration file for flake8
+├── .pre-commit-config.yaml          <- Checks quality of code before commits
 │
-└── github_dagger_workflow_project   <- Source code for use in this project.
+├── Makefile.venv                    <- Library for managing venv via makefile
+│
+├── Makefile                         <- Project related scripts
+│
+├── references                       <- Documentation and extra resources
+│
+├── requirements.txt                 <- Python dependencies need for the project
+│
+├── tests
+│   │
+│   └── verify_artifacts.py          <- Tests to check if all artifacts are copied correctly
+│
+└── github_dagger_workflow_project   <- Source code for the project
     │
-    ├── __init__.py             <- Makes github_dagger_workflow_project a Python module
+    ├── __init__.py                  <- Marks the directory as a Python package
     │
-    ├── config.py               <- Store useful variables and configuration
+    ├── 01_data_transformations.py   <- Script for data preprocessing and transformation
     │
-    ├── dataset.py              <- Scripts to download or generate data
+    ├── 02_model_training.py         <- Script for training the models
     │
-    ├── features.py             <- Code to create features for modeling
+    ├── 03_model_selection.py        <- Script for selecting the best perfoming model
     │
-    ├── modeling
-    │   ├── __init__.py
-    │   ├── predict.py          <- Code to run model inference with trained models
-    │   └── train.py            <- Code to train models
+    ├── 04_prod_model.py             <- Script for comparing new best model and production model
     │
-    └── plots.py                <- Code to create visualizations
+    ├── 05_model_deployment.py       <- Script for deploying model
+    │
+    ├── config.py                    <- Constants and paths used in the pipeline's scripts
+    │
+    ├── pipeline_utils.py            <- Encapsulated code from the .py monolith.
+    │
+    ├── artifacts
+    │   │
+    │   └── raw_data.csv.dvc         <- Metadata tracked by DVC for data file
+    │
+    └── utils.py                     <- Helper functions extracted from the .py monolith
 ```
 
----
+# How to run the code
+
+## Artifact creation
+
+The workflow can be triggered either on pull requests to `main` or manually.
+
+It can be triggered manually [here](https://github.com/PLtier/github-dagger-workflow-project/actions/workflows/log_and_test_action.yml) by pressing `Run workflow` on the `main` branch, then refresh the page and the triggered workflow will appear. After all the jobs have been run, the model artifact can be found on the summary page of the run of the first job. We also store other artifacts for convenience.
+The testing is automatically run afterwards to let the user check if it was of a quality.
+Artifacts are stored for 90 days.
+
+## Local development / Running
+
+### Environment installation
+
+For local running you need:
+
+- `docker` (Server): >= 4.36
+- `dagger` >= 0.14
+
+For local development you need as well:
+
+- `go` - 1.23.3 is currently used.
+- `git` >= 2.39
+- `python` >= 3.11
+- `make` >= 3.81 (lower should work too)
+
+Then run:
+
+```shell
+make setup
+.venv\Scripts\activate # for windows
+source .venv/bin/activate # for linux/macos
+```
+
+Additionally, It installs `pre-commit` which takes care of formatting and linting before commits for go and python.
+
+### Running the code:
+
+#### Run scripts on the host machine
+
+For that you can run scripts sequentially in the github_dagger_workflow_project.
+
+> Beware: all artifacts will be appended to your repo dir!
+
+#### Run in a container
+
+The command will run the `dagger` pipeline. In the end, **only** final artifacts will be appended to
+
+```shell
+make container_run
+```
+
+#### Local testing
+
+Perhaps most useful. It will not append any of the container-produced files to the host machine, but it will run a test script **which will ensure that all important artifacts are indeed logged**
+
+```shell
+make test
+```
+
+> Beware: it will not test the model on the inference test!
+
+## Inference testing
+
+The same workflow which generates artifacts automatically runs the inference testing. Also, the artifacts testing and the inference test is carried out after every PR (and subsequent commits) to `main`
+
+## Maintaining code quality
+
+- We used `pre-commit` to lint and format, as stated above. We use `ruff`, `ruff format`, `gofmt` and `govet`. We check for PEP8 warnings and errors.
+- `main` branch-protection (with github repo settings)
+  - PR is required before merging
+  - at least one approval is needed. We automatically assign reviewers with `CODEOWNERS` file.
+  - we required status checks to be passed for both of our jobs i.e. `Train and Upload Model` and `Unit Test Model Artifacts`. The test checks explicitly whether all artifacts have been generated and if the model passes inference test. Jobs are automatically triggered on merge.
+- We maintained a clear goals via `Issues` and often quite verbose reviews.
+- we used 90% of time semantic commits
+
+## Code releases
+
+On every push to main a new tag is released with the current time it was published.
+See current tags: [Tags](https://github.com/PLtier/github-dagger-workflow-project/tags)
+
+# Code decisions and reflections
+
+> This is not the part of the documentation: you can read about a few (hard) decisions we have made on [Reflections](./references/project_reflections.md)
