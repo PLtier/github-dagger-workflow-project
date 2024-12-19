@@ -106,17 +106,6 @@ It's easy to refactor notebook code because the ccds template makes your project
 from classification_fashion_mnist.data import make_dataset
 ```
 
-### installing dependencies
-
-First of all, install `make`
-
-Due to simplicity we use `venv`.
-
-```shell
-make create_environment # creates .venv
-make requirements # fetches & install deps
-```
-
 ### Naming Convention for Notebooks
 
 We use name notebooks with a scheme that looks like this:
@@ -172,5 +161,7 @@ git push -u origin main #NOT! It's blocked besides
 ```
 
 ### Few practices:
+
 From "Accelerate", Forsgren:
-"In short and maybe- counter-intuitively - going faster and releasing more frequently actually LEDs to higher quality products."
+
+> "In short and maybe- counter-intuitively - going faster and releasing more frequently actually LEDs to higher quality products."
