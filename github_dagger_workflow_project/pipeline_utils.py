@@ -94,7 +94,10 @@ def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def process_and_save_artifacts(data):
+def process_and_save_artifacts(data: pd.DataFrame) -> None:
+    """
+    Finds outliers, imputes missing data, and performs min-max data scaling
+    """
     vars = [
         "lead_id",
         "lead_indicator",
@@ -105,20 +108,17 @@ def process_and_save_artifacts(data):
     ]
     for col in vars:
         data[col] = data[col].astype("object")
-
     cont_vars = data.loc[:, ((data.dtypes == "float64") | (data.dtypes == "int64"))]
     cat_vars = data.loc[:, (data.dtypes == "object")]
 
     cont_vars = cont_vars.apply(
         lambda x: x.clip(lower=(x.mean() - 2 * x.std()), upper=(x.mean() + 2 * x.std()))
     )
-
     outlier_summary = cont_vars.apply(utils.describe_numeric_col).T
     outlier_summary.to_csv(OUTLIER_SUMMARY_PATH)
 
     cat_missing_impute = cat_vars.mode(numeric_only=False, dropna=True)
     cat_missing_impute.to_csv(CAT_MISSING_IMPUTE_PATH)
-
     cont_vars = cont_vars.apply(utils.impute_missing_values)
     cont_vars.apply(utils.describe_numeric_col).T
 
@@ -128,6 +128,7 @@ def process_and_save_artifacts(data):
         lambda x: pd.Series([x.count(), x.isnull().sum()], index=["Count", "Missing"])
     ).T
 
+    # scaling data
     scaler = MinMaxScaler()
     scaler.fit(cont_vars)
     joblib.dump(value=scaler, filename=SCALER_PATH)
@@ -141,7 +142,6 @@ def process_and_save_artifacts(data):
     data_columns = list(data.columns)
     with open(COLUMNS_DRIFT_PATH, "w+") as f:
         json.dump(data_columns, f)
-
     data.to_csv(TRAINING_DATA_PATH, index=False)
 
     data["bin_source"] = data["source"]
@@ -149,7 +149,6 @@ def process_and_save_artifacts(data):
     data.loc[~data["source"].isin(values_list), "bin_source"] = "Others"
     mapping = {"li": "socials", "fb": "socials", "organic": "group1", "signup": "group1"}
     data["bin_source"] = data["source"].map(mapping)
-
     data.to_csv(TRAIN_DATA_GOLD_PATH, index=False)
 
 
