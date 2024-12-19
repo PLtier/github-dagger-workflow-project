@@ -14,8 +14,10 @@ Below is not the part of the documentation.
   - better troubleshooting
   - not polluting global namespace (so fewer bugs)
 - Imports: we sorted them and removed relative imports i.e. we don't do `import utils` in order not to confuse with an external library.
-- The code responsible for registering / transition to staging / deployment has not been deleted (except a few lines) but wrapped and left.
-- We moved all paths in scripts to external file.
+- The code responsible for registering / transition to staging / deployment has not been deleted (except a few lines) but wrapped though not used.
+- We moved all constants in scripts to external file.
+- We realised that in MLFlow runs, LR would copy the whole artifacts folder again to its MLFlow folder, even including xgboost model. We think it might be unoptimal, but we leave it as it is as we are uncertain of the motives.
+- We keep all artifacts in the artifacts folder because there are not many of them and it allows us for easy testing them and retrieving during workflows.
 
 ## What to improve upon
 
