@@ -40,13 +40,6 @@ jobs:
           name: model
           path: artifacts/model.pkl
 
-      - name: tree
-        uses: jaywcjlove/github-action-folder-tree@main
-        id: tree
-        with:
-          path: ./
-          depth: 3
-
   test_model:
     needs: train_and_upload
     name: Unit Test Model Artifacts
