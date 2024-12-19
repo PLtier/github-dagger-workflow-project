@@ -13,7 +13,7 @@ In this project we were tasked with restructuring a Python monolith using the co
 │   │
 │   ├── tag_version.yml              <- Workflow for creating version tags
 │   │
-│   └── test_action.yml              <- Workflow that automatically trains and tests model
+│   └── log_and_test_action.yml      <- Workflow that automatically trains and tests model
 │
 ├── pipeline_deps
 │   │
